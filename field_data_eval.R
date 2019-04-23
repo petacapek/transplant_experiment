@@ -313,6 +313,28 @@ CTC$horizon<-c("Organic soil")
 #####Bind all together
 resp_all<-rbind(PLO, CTO, PLA, CTA, PLC, CTC)
 
+#Correct measured respiration rate by factual volume/area 
+resp_all$resp_corr<-numeric(length = nrow(resp_all))
+
+for(i in 1:nrow(resp_all)){
+  if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Litter"){
+    resp_all$resp_corr[i]<-67/78*resp_all$resp[i]
+  }else{
+    if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Organic soil"){
+      resp_all$resp_corr[i]<-111/78*resp_all$resp[i]
+    }else{
+      if(resp_all$Soil[i]=="Certovo" & resp_all$horizon[i]=="Litter"){
+        resp_all$resp_corr[i]<-67/78*resp_all$resp[i]
+      }else{
+        resp_all$resp_corr[i]<-111/78*resp_all$resp[i]
+      }
+    }
+  }
+}
+
+resp_all[resp_all$Origin=="Control", "resp_corr"]<-resp_all[resp_all$Origin=="Control", "resp"]
+
+#correct for CO2 dissolution in soil water
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -339,12 +361,93 @@ Env.av<-resp_all %>% group_by(Soil, Origin) %>% summarise(Tsoil=mean(Tsoil, na.r
                                                   Tair=mean(Tair, na.rm = T),
                                                   W=mean(W, na.rm = T))
 
-Env.av[c(1,2,4,5), ]
 
-#Temperature - Tsurface for O horizons, Tsoil for A horizons
-resp_all$Temp<-ifelse(resp_all$horizon=="Organic soil", resp_all$Tsoil, resp_all$Tsurface)
+#Heterotrophic respiration rate of transplant samples is recalculated per 
+#volume of soil column in the transplant and mass of the soil in the transplant.
+#Add mass of the soil
+resp_all$Soil_mass<-numeric(length = nrow(resp_all))#in grams
+
+for(i in 1:nrow(resp_all)){
+  if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Litter"){
+    resp_all$Soil_mass[i]<-100*0.280
+  }else{
+    if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Organic soil"){
+      resp_all$Soil_mass[i]<-100*0.280+500*0.423
+    }else{
+      if(resp_all$Soil[i]=="Certovo" & resp_all$horizon[i]=="Litter"){
+        resp_all$Soil_mass[i]<-100*0.302
+      }else{
+        resp_all$Soil_mass[i]<-100*0.302+500*0.345
+      }
+    }
+  }
+}
+
+#controls have uknown mass of soil
+resp_all[resp_all$Origin=="Control", "Soil_mass"]<-NA
+
+#Add the surface area of the tranplanted soil column
+resp_all$Surface<-ifelse(resp_all$horizon=="Litter", 67, 111)
+resp_all[resp_all$Origin=="Control", "Surface"]<-NA
+
+#Calculating respiration rate per soil mass 
+resp_all$resp_mass<-with(resp_all, Surface/1e4*resp/Soil_mass*60*60)#in umol/g/h
+
+#Add volume of soil column in the transplant
+resp_all$Volume<-numeric(length = nrow(resp_all))
+
+for(i in 1:nrow(resp_all)){
+  if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Litter"){
+    resp_all$Volume[i]<-4.5*67
+  }else{
+    if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Organic soil"){
+      resp_all$Volume[i]<-4.5*67+111*10.5
+    }else{
+      if(resp_all$Soil[i]=="Certovo" & resp_all$horizon[i]=="Litter"){
+        resp_all$Volume[i]<-5.5*67
+      }else{
+        resp_all$Volume[i]<-5.5*67+10.5*111
+      }
+    }
+  }
+}
+
+resp_all[resp_all$Origin=="Control", "Volume"]<-NA
+
+#Calculating respiration rate per volume of the soil
+resp_all$resp_vol<-with(resp_all, Surface/1e4*resp/Volume*60*60*1000)#in nmol/cm3/h
+
+#Show averages
+resp_all %>% group_by(Soil, Origin, horizon) %>% summarise(HR=mean(resp, na.rm = T),
+                                                           HR_mass=mean(resp_mass, na.rm = T),
+                                                           HR_vol=mean(resp_vol, na.rm = T))
+
+
+#Temperature - Tsurface for O horizons, Tsoil and Tsurface weighted mean for A horizons - weighted
+#by the volume exposed to Tsoil and Tsurface
+
+resp_all$Temp<-numeric(length = nrow(resp_all))
+
+for(i in 1:nrow(resp_all)){
+  if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Litter"){
+    resp_all$Temp[i]<-resp_all$Tsurface[i]
+  }else{
+    if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Organic soil"){
+      resp_all$Temp[i]<-4.5*67/(resp_all$Volume[i])*resp_all$Tsurface[i]+111*10.5/(resp_all$Volume[i])*resp_all$Tsoil[i]
+    }else{
+      if(resp_all$Soil[i]=="Certovo" & resp_all$horizon[i]=="Litter"){
+        resp_all$Temp[i]<-resp_all$Tsurface[i]
+      }else{
+        
+        resp_all$Temp[i]<-5.5*67/(resp_all$Volume[i])*resp_all$Tsurface[i]+10.5*111/(resp_all$Volume[i])*resp_all$Tsoil[i]
+      }
+    }
+  }
+}
+
 resp_all[resp_all$Origin=="Control", "horizon"]<-c("Litter")
 
+resp_all %>% group_by(Soil, horizon) %>% summarise(HR=mean(Temp, na.rm = T))
 
 #############################################Statistics###############################################
 #correspondence function
@@ -538,8 +641,61 @@ summary(l_lme6)
 #no difference
 
 ######################################Non-linear modelling#######################################
-#Soil warming is associated with soil drying
+#Soil warming is associated with soil drying:
 
+ggplot(resp_all, aes(Temp, W))+geom_point(aes(colour=horizon))+facet_grid(Soil~Origin)+
+  stat_smooth(method = "lm", se=F)+
+  xlab("Temperature (°C)")+
+  ylab("Gravimetric water content (% of fresh weight)")+
+  theme_bw()+
+  theme(axis.line.x = element_blank(),
+        axis.line.y =element_blank(),
+        plot.background=element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.y = element_text(size=14,colour="black"),
+        axis.text.x = element_text(size=14,colour="black"),
+        axis.title = element_text(size=14,colour="black"),
+        legend.text=element_text(size=14,colour="black"),
+        legend.title=element_blank(),
+        legend.justification=c(1,0), legend.position=c("top"),
+        legend.key.size = unit(1,'lines'),
+        legend.background=element_rect(fill=NA, colour=NA),
+        strip.text = element_text(size=14),
+        strip.background = element_rect(colour="black", fill = "white"),
+        panel.spacing = unit(0.25, "lines"))
+
+#The effect of temperature on heterotrophic soil respiration can be confounded
+#by increased soil drying 
+ggplot(resp_all[resp_all$outliers=="NO", ], aes(W, resp))+geom_point(aes(colour=horizon))+
+  facet_wrap(Soil~Origin, scales = "free")+
+  stat_smooth(method = "lm", se=F)+
+  ylab(expression(paste("Respiration rate (", mu, "mol ", m^{-2}~h^{-1}, ")")))+
+  xlab("Gravimetric water content (% of fresh weight)")+
+  theme_bw()+
+  theme(axis.line.x = element_blank(),
+        axis.line.y =element_blank(),
+        plot.background=element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.y = element_text(size=14,colour="black"),
+        axis.text.x = element_text(size=14,colour="black"),
+        axis.title = element_text(size=14,colour="black"),
+        legend.text=element_text(size=14,colour="black"),
+        legend.title=element_blank(),
+        legend.justification=c(1,0), legend.position=c("top"),
+        legend.key.size = unit(1,'lines'),
+        legend.background=element_rect(fill=NA, colour=NA),
+        strip.text = element_text(size=14),
+        strip.background = element_rect(colour="black", fill = "white"),
+        panel.spacing = unit(0.25, "lines"))
+
+#Thus, temperature sensitivity is estimated by two different non-linear functions:
+#Arrhenius equation with and without accounting for soil moisture effect.
+#The equations are fitted for each experimental treatment separately and their goodness 
+#of fit is compared.
+
+#First, gravimetric water content is recalculated to volumetric water content
 
 
 #Temperature sensitivity estimate
@@ -711,7 +867,7 @@ for(i in 1:240){
 
 ggplot(resp_all[resp_all$outliers=="NO", ], aes(Temp, resp))+geom_point(cex=5, shape=21, aes(colour=Soil), alpha=0.5)+
   facet_grid(horizon~Origin, scales="free")+geom_line(data=simul, aes(Temp, resp, colour=Soil), lwd=1.5)+
-  ylab(expression(paste("Respiration rate (", mu, "mol ", m^{-2}~s^{-1}, ")")))+
+  ylab(expression(paste("Respiration rate (", mu, "mol ", m^{-2}~h^{-1}, ")")))+
   xlab("Temperature (°C)")+
   theme_bw()+
   theme(axis.line.x = element_blank(),
