@@ -87,8 +87,8 @@ PLOenv$Tresistance<-with(PLOenv, abs(Tsurface-Tsoil))
 
 #Moisture (relative amount in water in the whole soil sample)
 PLOenv$W<-with(PLOenv, PLw.cal[1]*Moisture/(PLw.cal[2]+Moisture)-PLw.cal[3])
-#replace negative values with NA
-PLOenv[(PLOenv$W<0 & !is.na(PLOenv$W)), "W"]<-NA
+#replace negative values with the observed minimum moisture
+PLOenv[(PLOenv$W<0 & !is.na(PLOenv$W)), "W"]<-min(PLOenv[(PLOenv$W>0 & !is.na(PLOenv$W)), "W"])
 
 summary(PLOenv)
 
@@ -158,8 +158,8 @@ CTOenv$Tresistance<-with(CTOenv, abs(Tsurface-Tsoil))
 
 #Moisture (relative amount in water in the whole soil sample)
 CTOenv$W<-with(CTOenv, CTw.cal[1]*Moisture/(CTw.cal[2]+Moisture)-CTw.cal[3])
-#replace negative values with Na
-CTOenv[(CTOenv$W<0 & !is.na(CTOenv$W)), "W"]<-NA
+#replace negative values with observed minimum
+CTOenv[(CTOenv$W<0 & !is.na(CTOenv$W)), "W"]<-min(CTOenv[(CTOenv$W>0 & !is.na(CTOenv$W)), "W"])
 
 summary(CTOenv)
 
@@ -334,15 +334,17 @@ for(i in 1:nrow(resp_all)){
 
 resp_all[resp_all$Origin=="Control", "resp_corr"]<-resp_all[resp_all$Origin=="Control", "resp"]
 
-#correct for CO2 dissolution in soil water
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ANALYSIS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-ggplot(resp_all, aes(Tsurface, resp))+geom_point(cex=6, aes(colour=Origin), alpha=0.5)+
+ggplot(resp_all, aes(Tair, resp_corr))+geom_point(cex=6, aes(colour=Origin), alpha=0.5)+
   facet_wrap(horizon~Block, scales="free")
+
+ggplot(resp_all[(resp_all$Soil=="Certovo" & resp_all$Origin=="Native"), ], aes(Tair, resp_corr))+
+  geom_point(cex=6, aes(colour=horizon), alpha=0.5)+
+  facet_wrap(~Block, scales="free")
 
 #mark the outliers
 resp_all$outliers<-character(length = nrow(resp_all))
@@ -352,7 +354,7 @@ resp_all[(resp_all$Block==8 & resp_all$horizon=="Litter" &
 
 resp_all$outliers<-ifelse(substr(resp_all[,"time"], 1,10)=="2018.10.30", "YES", "NO")
 
-ggplot(resp_all[resp_all$outliers=="NO", ], aes(W, resp))+geom_point(cex=6, aes(colour=Origin), alpha=0.5)+
+ggplot(resp_all[resp_all$outliers=="NO", ], aes(Tsurface, resp_corr))+geom_point(cex=6, aes(colour=Origin), alpha=0.5)+
   facet_wrap(horizon~Block, scales="free")
 
 #Averages
@@ -391,9 +393,9 @@ resp_all$Surface<-ifelse(resp_all$horizon=="Litter", 67, 111)
 resp_all[resp_all$Origin=="Control", "Surface"]<-NA
 
 #Calculating respiration rate per soil mass 
-resp_all$resp_mass<-with(resp_all, Surface/1e4*resp/Soil_mass*60*60)#in umol/g/h
+resp_all$resp_mass<-with(resp_all, Surface/1e4*resp_corr/Soil_mass*60*60)#in umol/g/h
 
-#Add volume of soil column in the transplant
+#Add volume of soil column in the transplant in cm3
 resp_all$Volume<-numeric(length = nrow(resp_all))
 
 for(i in 1:nrow(resp_all)){
@@ -415,39 +417,13 @@ for(i in 1:nrow(resp_all)){
 resp_all[resp_all$Origin=="Control", "Volume"]<-NA
 
 #Calculating respiration rate per volume of the soil
-resp_all$resp_vol<-with(resp_all, Surface/1e4*resp/Volume*60*60*1000)#in nmol/cm3/h
+resp_all$resp_vol<-with(resp_all, Surface/1e4*resp_corr/Volume*60*60*1000)#in nmol/cm3/h
 
 #Show averages
-resp_all %>% group_by(Soil, Origin, horizon) %>% summarise(HR=mean(resp, na.rm = T),
+resp_all[resp_all$outliers=="NO", ] %>% group_by(Soil, Origin, horizon) %>% summarise(HR=mean(resp_corr, na.rm = T),
                                                            HR_mass=mean(resp_mass, na.rm = T),
                                                            HR_vol=mean(resp_vol, na.rm = T))
 
-
-#Temperature - Tsurface for O horizons, Tsoil and Tsurface weighted mean for A horizons - weighted
-#by the volume exposed to Tsoil and Tsurface
-
-resp_all$Temp<-numeric(length = nrow(resp_all))
-
-for(i in 1:nrow(resp_all)){
-  if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Litter"){
-    resp_all$Temp[i]<-resp_all$Tsurface[i]
-  }else{
-    if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Organic soil"){
-      resp_all$Temp[i]<-4.5*67/(resp_all$Volume[i])*resp_all$Tsurface[i]+111*10.5/(resp_all$Volume[i])*resp_all$Tsoil[i]
-    }else{
-      if(resp_all$Soil[i]=="Certovo" & resp_all$horizon[i]=="Litter"){
-        resp_all$Temp[i]<-resp_all$Tsurface[i]
-      }else{
-        
-        resp_all$Temp[i]<-5.5*67/(resp_all$Volume[i])*resp_all$Tsurface[i]+10.5*111/(resp_all$Volume[i])*resp_all$Tsoil[i]
-      }
-    }
-  }
-}
-
-resp_all[resp_all$Origin=="Control", "horizon"]<-c("Litter")
-
-resp_all %>% group_by(Soil, horizon) %>% summarise(HR=mean(Temp, na.rm = T))
 
 #############################################Statistics###############################################
 #correspondence function
@@ -462,188 +438,10 @@ correspondence<-function(obs, pred, N){
   return(out)
 }
 
-
-library(lmerTest)
-resp_all$TT<-1/8.314/(resp_all$Temp+273.15)
-resp_all$Block<-as.numeric(resp_all$Block)
-
-#Generic statistical model
-lm0<-lm(log(resp)~TT, 
-         data=resp_all[resp_all$outliers=="NO", ])
-summary(lm0)
-
-#Block as a random factor effect
-lme0<-lmer(log(resp)~TT+(1|Block), data=resp_all[resp_all$outliers=="NO", ])
-summary(lme0)
-
-#Soil effect
-lme1<-update(lme0, .~.+Soil)
-summary(lme1)
-
-anova(lme0, lme1, lm0)
-
-#horizon effect
-lme1.2<-update(lme0, .~.+horizon)
-summary(lme1.2)
-
-anova(lme0, lme1, lm0, lme1.2)
-#horizon has larger effect than Soil
-
-#effect of Origin
-lme1.3<-update(lme0, .~.+Origin)
-summary(lme1.3)
-anova(lme1.3)
-
-anova(lme0, lme1, lm0, lme1.2, lme1.3)
-
-correspondence(obs=as.numeric(resp_all[resp_all$outliers=="NO", "resp"]), pred=exp(predict(lme1.3, newdata=resp_all[resp_all$outliers=="NO", ])), N=6)
-#Origin has the greatest effect since controls respire always more than transplants
-
-#does soil or horizon have different respiration rates
-lme1.4<-update(lme1.3, .~.+Soil)
-
-summary(lme1.4)
-
-anova(lme1.4, lme1.3)
-
-lme1.5<-update(lme1.3, .~.+horizon)
-
-summary(lme1.5)
-
-anova(lme1.4, lme1.3, lme1.5)
-#horizont nema vliv na rychlost respirace
-
-lme1.6<-update(lme1.3, .~.+Soil:Origin)
-
-summary(lme1.6)
-anova(lme1.6)
-anova(lme1.4, lme1.3, lme1.5, lme1.6)
-
-lme1.7<-update(lme1.3, .~.+W)
-
-summary(lme1.7)
-anova(lme1.7, lme1.3)
-
-#temperature sensitivity
-#horizon
-lme2<-lmer(log(resp)~TT:horizon+Origin+(1|Block), data=resp_all[resp_all$outliers=="NO", ])
-
-summary(lme2)
-
-anova(lme1.3, lme2)
-correspondence(obs=as.numeric(resp_all[resp_all$outliers=="NO", "resp"]), pred=exp(predict(lme2, newdata=resp_all[resp_all$outliers=="NO", ])), N=6)
-#not very convincing
-
-#Soil
-lme2.2<-lmer(log(resp)~TT:Soil+Origin+(1|Block), data=resp_all[resp_all$outliers=="NO", ])
-
-summary(lme2.2)
-
-anova(lme1.3, lme2, lme2.2)
-correspondence(obs=as.numeric(resp_all[resp_all$outliers=="NO", "resp"]), pred=exp(predict(lme2.2, newdata=resp_all[resp_all$outliers=="NO", ])), N=6)
-#much better
-
-#Origin
-lme2.3<-lmer(log(resp)~TT:Origin+Origin+(1|Block), data=resp_all[resp_all$outliers=="NO", ])
-
-summary(lme2.3)
-
-anova(lme1.3, lme2, lme2.2, lme2.3)
-#not at all
-
-#Soil vs Origin
-lme2.4<-lmer(log(resp)~TT:Soil:Origin+Origin+(1|Block), data=resp_all[resp_all$outliers=="NO", ])
-
-summary(lme2.4)
-
-anova(lme1.3, lme2, lme2.2, lme2.3, lme2.4)
-correspondence(obs=as.numeric(resp_all[resp_all$outliers=="NO", "resp"]), pred=exp(predict(lme2.4, newdata=resp_all[resp_all$outliers=="NO", ])), N=6)
-
-#W
-lme2.5<-lmer(log(resp)~TT:W+Origin+(1|Block), data=resp_all[resp_all$outliers=="NO", ])
-
-summary(lme2.5)
-
-anova(lme2.5)
-correspondence(obs=as.numeric(resp_all[resp_all$outliers=="NO", "resp"]), pred=exp(predict(lme2.5, newdata=resp_all[resp_all$outliers=="NO", ])), N=6)
-#no
-
-######################################################Temperature sensitivity###################################################################
-#Controls separately
-c_lme1<-lmer(log(resp)~TT+(1|Block), data=resp_all[resp_all$outliers=="NO", ], subset = c(Origin=="Control"))
-
-summary(c_lme1)
-anova(c_lme1)
-
-#intercept
-c_lme2<-update(c_lme1, .~.+Soil)
-
-summary(c_lme2)
-
-anova(c_lme2, c_lme1)
-
-c_lme2.2<-update(c_lme1, .~.+W)
-
-summary(c_lme2.2)
-
-anova(c_lme2.2)
-
-#slope
-c_lme3<-lmer(log(resp)~TT:Soil+(1|Block), data=resp_all[resp_all$outliers=="NO", ], subset = c(Origin=="Control"))
-
-summary(c_lme3)
-
-anova(c_lme2, c_lme1, c_lme3)
-#no difference - estimates are almost the same
-
-c_lme4<-lmer(log(resp)~TT:W+(1|Block), data=resp_all[resp_all$outliers=="NO", ], subset = c(Origin=="Control"))
-
-anova(c_lme4)
-
-#Litter horizon separately
-l_lme1<-lmer(log(resp)~TT+(1|Block), data=resp_all[resp_all$outliers=="NO", ], subset = c(horizon=="Litter" & Origin!="Control"))
-
-summary(l_lme1)
-
-#intercept - Soil
-l_lme2<-update(l_lme1, .~.+Soil)
-
-summary(l_lme2)
-anova(l_lme2)
-
-#intercept - Origin
-l_lme3<-update(l_lme1, .~.+Origin)
-
-summary(l_lme3)
-anova(l_lme3)
-
-#intercept - W
-l_lme4<-update(l_lme1, .~.+W, na.action=na.omit)
-
-summary(l_lme4)
-anova(l_lme4)
-
-
-#Slope
-l_lme4<-update(l_lme1, .~TT:Soil+W+(1|Block))
-
-summary(l_lme4)
-#no difference
-
-l_lme5<-update(l_lme1, .~TT:Origin+W+(1|Block))
-
-summary(l_lme5)
-#no difference
-
-l_lme6<-update(l_lme1, .~TT:Origin:Soil+(1|Block))
-
-summary(l_lme6)
-#no difference
-
 ######################################Non-linear modelling#######################################
 #Soil warming is associated with soil drying:
 
-ggplot(resp_all, aes(Temp, W))+geom_point(aes(colour=horizon))+facet_grid(Soil~Origin)+
+ggplot(resp_all, aes(Tair, W))+geom_point(aes(colour=horizon))+facet_grid(Soil~Origin)+
   stat_smooth(method = "lm", se=F)+
   xlab("Temperature (°C)")+
   ylab("Gravimetric water content (% of fresh weight)")+
@@ -667,7 +465,7 @@ ggplot(resp_all, aes(Temp, W))+geom_point(aes(colour=horizon))+facet_grid(Soil~O
 
 #The effect of temperature on heterotrophic soil respiration can be confounded
 #by increased soil drying 
-ggplot(resp_all[resp_all$outliers=="NO", ], aes(W, resp))+geom_point(aes(colour=horizon))+
+ggplot(resp_all[resp_all$outliers=="NO", ], aes(W, resp_corr))+geom_point(aes(colour=horizon))+
   facet_wrap(Soil~Origin, scales = "free")+
   stat_smooth(method = "lm", se=F)+
   ylab(expression(paste("Respiration rate (", mu, "mol ", m^{-2}~h^{-1}, ")")))+
@@ -689,15 +487,46 @@ ggplot(resp_all[resp_all$outliers=="NO", ], aes(W, resp))+geom_point(aes(colour=
         strip.text = element_text(size=14),
         strip.background = element_rect(colour="black", fill = "white"),
         panel.spacing = unit(0.25, "lines"))
+#The figure suggests unimodal relationship as has been suggested previously
 
 #Thus, temperature sensitivity is estimated by two different non-linear functions:
 #Arrhenius equation with and without accounting for soil moisture effect.
 #The equations are fitted for each experimental treatment separately and their goodness 
 #of fit is compared.
 
-#First, gravimetric water content is recalculated to volumetric water content
+#First, gravimetric water content is recalculated to volumetric water content cm3/cm3 (theta)
+resp_all$theta<-with(resp_all, W/(1-W)*Soil_mass/Volume)
 
+#Then, soil porosity of soil column (phi - cm3/cm3) is added 
+resp_all$phi<-numeric(length = nrow(resp_all))
 
+for(i in 1:nrow(resp_all)){
+  if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Litter"){
+    resp_all$phi[i]<-0.378
+  }else{
+    if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Organic soil"){
+      resp_all$phi[i]<-0.151
+    }else{
+      if(resp_all$Soil[i]=="Certovo" & resp_all$horizon[i]=="Litter"){
+        resp_all$phi[i]<-0.102
+      }else{
+        resp_all$phi[i]<-0.194
+      }
+    }
+  }
+}
+
+#The volumetric water content higher than total porosity (4% of observations) 
+#is adjusted to maximum, i.e. total porosity
+for(i in 1:nrow(resp_all)){
+  if(resp_all$theta[i]/resp_all$phi[i]>1 & !is.na(resp_all$theta[i])){
+    resp_all$theta[i]<-resp_all$phi[i]
+  }else{
+    resp_all$theta[i]<-resp_all$theta[i]
+  }
+}
+  
+  
 #Temperature sensitivity estimate
 #PLO-Native
 Ts_plo_native<-nls(resp~A*exp(Ea/8.314/(Temp+273.15)), 
