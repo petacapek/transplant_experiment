@@ -502,10 +502,10 @@ resp_all$phi<-numeric(length = nrow(resp_all))
 
 for(i in 1:nrow(resp_all)){
   if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Litter"){
-    resp_all$phi[i]<-0.378
+    resp_all$phi[i]<-0.108
   }else{
     if(resp_all$Soil[i]=="Plesne" & resp_all$horizon[i]=="Organic soil"){
-      resp_all$phi[i]<-0.151
+      resp_all$phi[i]<-0.246
     }else{
       if(resp_all$Soil[i]=="Certovo" & resp_all$horizon[i]=="Litter"){
         resp_all$phi[i]<-0.102
@@ -516,7 +516,7 @@ for(i in 1:nrow(resp_all)){
   }
 }
 
-#The volumetric water content higher than total porosity (4% of observations) 
+#The volumetric water content higher than total porosity (2.2% of observations) 
 #is adjusted to maximum, i.e. total porosity
 for(i in 1:nrow(resp_all)){
   if(resp_all$theta[i]/resp_all$phi[i]>1 & !is.na(resp_all$theta[i])){
@@ -525,6 +525,32 @@ for(i in 1:nrow(resp_all)){
     resp_all$theta[i]<-resp_all$theta[i]
   }
 }
+
+########################Add estimates for controls!!!!!!!!!!!!!!!!!!
+
+ggplot(resp_all[(resp_all$outliers=="NO" & resp_all$Origin!="Control"), ], 
+       aes(theta/phi, resp_corr))+geom_point(aes(colour=horizon))+
+  facet_wrap(Soil~Origin, scales = "free")+
+  stat_smooth(method = "lm", se=F, formula = y~poly(x,2))+
+  ylab(expression(paste("Respiration rate (", mu, "mol ", m^{-2}~h^{-1}, ")")))+
+  xlab(expression(paste("Volumetric water content (", cm^{3}~cm^{-3} ,")")))+
+  theme_bw()+
+  theme(axis.line.x = element_blank(),
+        axis.line.y =element_blank(),
+        plot.background=element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.y = element_text(size=14,colour="black"),
+        axis.text.x = element_text(size=14,colour="black"),
+        axis.title = element_text(size=14,colour="black"),
+        legend.text=element_text(size=14,colour="black"),
+        legend.title=element_blank(),
+        legend.justification=c(1,0), legend.position=c("top"),
+        legend.key.size = unit(1,'lines'),
+        legend.background=element_rect(fill=NA, colour=NA),
+        strip.text = element_text(size=14),
+        strip.background = element_rect(colour="black", fill = "white"),
+        panel.spacing = unit(0.25, "lines"))
   
   
 #Temperature sensitivity estimate
