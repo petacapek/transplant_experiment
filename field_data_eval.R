@@ -313,6 +313,9 @@ CTC$horizon<-c("Organic soil")
 #####Bind all together
 resp_all<-rbind(PLO, CTO, PLA, CTA, PLC, CTC)
 
+#rename the horizon in controls
+resp_all[resp_all$Origin=="Control", "horizon"]<-c("Litter")
+
 #Correct measured respiration rate by factual volume/area 
 resp_all$resp_corr<-numeric(length = nrow(resp_all))
 
@@ -385,12 +388,13 @@ for(i in 1:nrow(resp_all)){
   }
 }
 
-#controls have uknown mass of soil
-resp_all[resp_all$Origin=="Control", "Soil_mass"]<-NA
+#controls have mass of soil equal to volume of litter horizon times its bulk density
+resp_all[resp_all$Origin=="Control", "Soil_mass"]<-ifelse(resp_all[resp_all$Origin=="Control", "Soil"]=="Plesne",
+                                                          4.5*78*0.108, 5.5*78*0.091)
 
 #Add the surface area of the tranplanted soil column
 resp_all$Surface<-ifelse(resp_all$horizon=="Litter", 67, 111)
-resp_all[resp_all$Origin=="Control", "Surface"]<-NA
+resp_all[resp_all$Origin=="Control", "Surface"]<-78
 
 #Calculating respiration rate per soil mass 
 resp_all$resp_mass<-with(resp_all, Surface/1e4*resp_corr/Soil_mass*60*60)#in umol/g/h
@@ -414,7 +418,9 @@ for(i in 1:nrow(resp_all)){
   }
 }
 
-resp_all[resp_all$Origin=="Control", "Volume"]<-NA
+#Assuming only the presence of litter in controls - colar depth around 4 cm (4.5 cm Plesne, 5.5 cm Certovo)
+resp_all[resp_all$Origin=="Control", "Volume"]<-ifelse(resp_all[resp_all$Origin=="Control", "Soil"]=="Plesne",
+                                                       4.5*78, 5.5*78)
 
 #Calculating respiration rate per volume of the soil
 resp_all$resp_vol<-with(resp_all, Surface/1e4*resp_corr/Volume*60*60*1000)#in nmol/cm3/h
@@ -516,7 +522,7 @@ for(i in 1:nrow(resp_all)){
   }
 }
 
-#The volumetric water content higher than total porosity (2.2% of observations) 
+#The volumetric water content higher than total porosity (3.3% of observations) 
 #is adjusted to maximum, i.e. total porosity
 for(i in 1:nrow(resp_all)){
   if(resp_all$theta[i]/resp_all$phi[i]>1 & !is.na(resp_all$theta[i])){
@@ -526,9 +532,7 @@ for(i in 1:nrow(resp_all)){
   }
 }
 
-########################Add estimates for controls!!!!!!!!!!!!!!!!!!
-
-ggplot(resp_all[(resp_all$outliers=="NO" & resp_all$Origin!="Control"), ], 
+ggplot(resp_all[(resp_all$outliers=="NO"), ], 
        aes(theta/phi, resp_corr))+geom_point(aes(colour=horizon))+
   facet_wrap(Soil~Origin, scales = "free")+
   stat_smooth(method = "lm", se=F, formula = y~poly(x,2))+
