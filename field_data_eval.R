@@ -1,6 +1,8 @@
 #LIBRARIES
 library(dplyr)
 library(ggplot2)
+library(FME)
+library(DEoptim)
 
 #Reading data
 #Respirations
@@ -532,9 +534,10 @@ for(i in 1:nrow(resp_all)){
   }
 }
 
+
 ggplot(resp_all[(resp_all$outliers=="NO"), ], 
        aes(theta/phi, resp_corr))+geom_point(aes(colour=horizon))+
-  facet_wrap(Soil~Origin, scales = "free")+
+  facet_wrap(Soil~Origin+Block, scales = "free")+
   stat_smooth(method = "lm", se=F, formula = y~poly(x,2))+
   ylab(expression(paste("Respiration rate (", mu, "mol ", m^{-2}~h^{-1}, ")")))+
   xlab(expression(paste("Volumetric water content (", cm^{3}~cm^{-3} ,")")))+
@@ -556,7 +559,20 @@ ggplot(resp_all[(resp_all$outliers=="NO"), ],
         strip.background = element_rect(colour="black", fill = "white"),
         panel.spacing = unit(0.25, "lines"))
   
-  
+#In the following function, two different non-linear models are defined and fitted to the data
+#First model do not assume effect of water content, the second does. 
+#The function is first applied to each treatment separatelly
+#Moreover, the function tests the significance of the difference between different replicates by comparing
+#goodness of model fit for each replicate or across all replicates
+#The function is called TW (Temperature - Moisture)
+
+
+#Read the function
+source("./R_functions/TW.R")
+
+TW_test2<-TW(resp_all[(resp_all$Soil=="Plesne" & resp_all$Origin=="Native" & resp_all$horizon=="Litter"), ])
+TW_test2$Gfit  
+
 #Temperature sensitivity estimate
 #PLO-Native
 Ts_plo_native<-nls(resp~A*exp(Ea/8.314/(Temp+273.15)), 
