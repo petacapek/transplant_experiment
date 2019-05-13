@@ -534,7 +534,6 @@ for(i in 1:nrow(resp_all)){
   }
 }
 
-
 ggplot(resp_all[(resp_all$outliers=="NO"), ], 
        aes(theta/phi, resp_corr))+geom_point(aes(colour=horizon))+
   facet_wrap(Soil~Origin+Block, scales = "free")+
@@ -558,13 +557,16 @@ ggplot(resp_all[(resp_all$outliers=="NO"), ],
         strip.text = element_text(size=14),
         strip.background = element_rect(colour="black", fill = "white"),
         panel.spacing = unit(0.25, "lines"))
-  
-#In the following function, two different non-linear models are defined and fitted to the data
-#First model do not assume effect of water content, the second does. 
-#The function is first applied to each treatment separatelly
-#Moreover, the function tests the significance of the difference between different replicates by comparing
-#goodness of model fit for each replicate or across all replicates
-#The function is called TW (Temperature - Moisture)
+
+#Data_frame is exported
+write.csv(resp_all, "merged_data.csv")
+
+
+#In the following function, three different linear models are defined and fitted to the data
+#First model do not assume effect of water content, the second two does. 
+#First model assumes polynomial relationship between respiration rate and relative water content
+#The second model assumes piecewise linear relationship 
+#fit of the models are compared for each soil core separately
 
 
 #Read the function
@@ -573,232 +575,3 @@ source("./R_functions/TW.R")
 TW_test2<-TW(resp_all[(resp_all$Soil=="Plesne" & resp_all$Origin=="Native" & resp_all$horizon=="Litter"), ])
 TW_test2$Gfit  
 
-#Temperature sensitivity estimate
-#PLO-Native
-Ts_plo_native<-nls(resp~A*exp(Ea/8.314/(Temp+273.15)), 
-                   resp_all[(resp_all$Soil=="Plesne" & 
-                               resp_all$horizon=="Litter" &
-                               resp_all$Origin=="Native" &
-                               resp_all$outliers=="NO"), ],
-                   start=list(A=1e9, Ea=-60000))
-summary(Ts_plo_native)
-
-#with Myers moisture function (in supplementary information to "A moisture function of soil heterotrophic respiration that incorporates microscale processes")
-library(minpack.lm)
-library(nlme)
-# Ts_plo_native_w<-nlsLM(resp~A*exp(Ea/8.314/(Temp+273.15)*(b*(W/p)+(1-b)*(W/p)^2)), 
-#                    resp_all[(resp_all$Soil=="Plesne" & 
-#                                resp_all$horizon=="Litter" &
-#                                resp_all$Origin=="Native" &
-#                                resp_all$outliers=="NO"), ],
-#                    start=list(A=1e9, Ea=-60000, b=5, p=0.8), na.action = na.omit,
-#                    control = c(niter=1e6))
-# summary(Ts_plo_native_w)
-
-
-#PLO-Transplanted
-Ts_plo_trans<-nls(resp~A*exp(Ea/8.314/(Temp+273.15)), 
-                  resp_all[(resp_all$Soil=="Plesne" & 
-                              resp_all$horizon=="Litter" &
-                              resp_all$Origin=="Transplanted" &
-                              resp_all$outliers=="NO"), ],
-                  start=list(A=1e7, Ea=-40000), control = c(maxiter=1e6))
-summary(Ts_plo_trans)
-
-#CTO-Native
-Ts_cto_native<-nls(resp~A*exp(Ea/8.314/(Temp+273.15)), 
-                   resp_all[(resp_all$Soil=="Certovo" & 
-                               resp_all$horizon=="Litter" &
-                               resp_all$Origin=="Native" &
-                               resp_all$outliers=="NO"), ],
-                   start=list(A=1e7, Ea=-40000), control = c(maxiter=1e6))
-summary(Ts_cto_native)
-
-#CTO-Transplanted
-Ts_cto_trans<-nls(resp~A*exp(Ea/8.314/(Temp+273.15)), 
-                  resp_all[(resp_all$Soil=="Certovo" & 
-                              resp_all$horizon=="Litter" &
-                              resp_all$Origin=="Transplanted" &
-                              resp_all$outliers=="NO"), ],
-                  start=list(A=1e7, Ea=-40000), control = c(maxiter=1e6))
-summary(Ts_cto_trans)
-
-#PLA-Native
-Ts_pla_native<-nls(resp~A*exp(Ea/8.314/(Temp+273.15)), 
-                   resp_all[(resp_all$Soil=="Plesne" & 
-                               resp_all$horizon=="Organic soil" &
-                               resp_all$Origin=="Native" &
-                               resp_all$outliers=="NO"), ],
-                   start=list(A=1e8, Ea=-40000), control = c(maxiter=1e6))
-summary(Ts_pla_native)
-
-#PLA-Transplanted
-Ts_pla_trans<-nls(resp~A*exp(Ea/8.314/(Temp+273.15)), 
-                  resp_all[(resp_all$Soil=="Plesne" & 
-                              resp_all$horizon=="Organic soil" &
-                              resp_all$Origin=="Transplanted" &
-                              resp_all$outliers=="NO"), ],
-                  start=list(A=1e7, Ea=-40000), control = c(maxiter=1e6))
-summary(Ts_pla_trans)
-
-#CTA-Native
-Ts_cta_native<-nls(resp~A*exp(Ea/8.314/(Temp+273.15)), 
-                   resp_all[(resp_all$Soil=="Certovo" & 
-                               resp_all$horizon=="Organic soil" &
-                               resp_all$Origin=="Native" &
-                               resp_all$outliers=="NO"), ],
-                   start=list(A=1e7, Ea=-40000), control = c(maxiter=1e6, minFactor=1e-12))
-summary(Ts_cta_native)
-
-#CTA-Transplanted
-Ts_cta_trans<-nls(resp~A*exp(Ea/8.314/(Temp+273.15)), 
-                  resp_all[(resp_all$Soil=="Certovo" & 
-                              resp_all$horizon=="Organic soil" &
-                              resp_all$Origin=="Transplanted" &
-                              resp_all$outliers=="NO"), ],
-                  start=list(A=1e7, Ea=-40000), control = c(maxiter=1e6))
-summary(Ts_cta_trans)
-
-
-#CTC
-Ts_ctc<-nls(resp~A*exp(Ea/8.314/(Temp+273.15)), 
-            resp_all[(resp_all$Soil=="Certovo" & 
-                        resp_all$horizon=="Organic soil" &
-                        resp_all$Origin=="Control" &
-                        resp_all$outliers=="NO"), ],
-            start=list(A=1e7, Ea=-40000), control = c(maxiter=1e6))
-summary(Ts_ctc)
-
-#PLC
-Ts_plc<-nls(resp~A*exp(Ea/8.314/(Temp+273.15)), 
-            resp_all[(resp_all$Soil=="Plesne" & 
-                        resp_all$horizon=="Organic soil" &
-                        resp_all$Origin=="Control" &
-                        resp_all$outliers=="NO"), ],
-            start=list(A=1e7, Ea=-40000), control = c(maxiter=1e6))
-summary(Ts_plc)
-
-##Ploting the results
-simul<-data.frame(Temp=rep(seq(0,23), times=10),
-                  Soil=c(rep("Plesne", times=5*24), rep("Certovo", times=5*24)),
-                  horizon=rep(c(rep("Litter", times=3*24), rep("Organic soil", times=2*24)), times=2),
-                  Origin=rep(c(rep("Native", times=24), rep("Transplanted", times=24),
-                               rep("Control", times=24),
-                               rep("Native", times=24), rep("Transplanted", times=24)), times=2),
-                  resp=numeric(length = 240))
-for(i in 1:240){
-  if(simul$Soil[i]=="Plesne" & simul$horizon[i]=="Litter" & simul$Origin[i]=="Native"){
-    
-    simul[i,"resp"]<-coef(Ts_plo_native)[1]*exp(coef(Ts_plo_native)[2]/8.314/(simul$Temp[i]+273.15))
-    
-  }else{
-    if(simul$Soil[i]=="Plesne" & simul$horizon[i]=="Litter" & simul$Origin[i]=="Transplanted"){
-      
-      simul[i,"resp"]<-coef(Ts_plo_trans)[1]*exp(coef(Ts_plo_trans)[2]/8.314/(simul$Temp[i]+273.15))
-    }else{
-      if(simul$Soil[i]=="Plesne" & simul$horizon[i]=="Organic soil" & simul$Origin[i]=="Native"){
-        
-        simul[i,"resp"]<-coef(Ts_pla_native)[1]*exp(coef(Ts_pla_native)[2]/8.314/(simul$Temp[i]+273.15))
-      }else{
-        if(simul$Soil[i]=="Plesne" & simul$horizon[i]=="Organic soil" & simul$Origin[i]=="Transplanted"){
-          
-          simul[i,"resp"]<-coef(Ts_pla_trans)[1]*exp(coef(Ts_pla_trans)[2]/8.314/(simul$Temp[i]+273.15))
-        }else{
-          if(simul$Soil[i]=="Plesne" & simul$horizon[i]=="Litter" & simul$Origin[i]=="Control"){
-            
-            simul[i,"resp"]<-coef(Ts_plc)[1]*exp(coef(Ts_plc)[2]/8.314/(simul$Temp[i]+273.15))
-          }else{
-            if(simul$Soil[i]=="Certovo" & simul$horizon[i]=="Litter" & simul$Origin[i]=="Native"){
-              
-              simul[i,"resp"]<-coef(Ts_cto_native)[1]*exp(coef(Ts_cto_native)[2]/8.314/(simul$Temp[i]+273.15))
-              
-            }else{
-              if(simul$Soil[i]=="Certovo" & simul$horizon[i]=="Litter" & simul$Origin[i]=="Transplanted"){
-                
-                simul[i,"resp"]<-coef(Ts_cto_trans)[1]*exp(coef(Ts_cto_trans)[2]/8.314/(simul$Temp[i]+273.15))
-              }else{
-                if(simul$Soil[i]=="Certovo" & simul$horizon[i]=="Organic soil" & simul$Origin[i]=="Native"){
-                  
-                  simul[i,"resp"]<-coef(Ts_cta_native)[1]*exp(coef(Ts_cta_native)[2]/8.314/(simul$Temp[i]+273.15))
-                }else{
-                  if(simul$Soil[i]=="Certovo" & simul$horizon[i]=="Organic soil" & simul$Origin[i]=="Transplanted"){
-                    
-                    simul[i,"resp"]<-coef(Ts_cta_trans)[1]*exp(coef(Ts_cta_trans)[2]/8.314/(simul$Temp[i]+273.15))
-                  }else{
-                    
-                    simul[i,"resp"]<-coef(Ts_ctc)[1]*exp(coef(Ts_ctc)[2]/8.314/(simul$Temp[i]+273.15))
-                    
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-
-ggplot(resp_all[resp_all$outliers=="NO", ], aes(Temp, resp))+geom_point(cex=5, shape=21, aes(colour=Soil), alpha=0.5)+
-  facet_grid(horizon~Origin, scales="free")+geom_line(data=simul, aes(Temp, resp, colour=Soil), lwd=1.5)+
-  ylab(expression(paste("Respiration rate (", mu, "mol ", m^{-2}~h^{-1}, ")")))+
-  xlab("Temperature (°C)")+
-  theme_bw()+
-  theme(axis.line.x = element_blank(),
-        axis.line.y =element_blank(),
-        plot.background=element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.text.y = element_text(size=14,colour="black"),
-        axis.text.x = element_text(size=14,colour="black"),
-        axis.title = element_text(size=14,colour="black"),
-        legend.text=element_text(size=14,colour="black"),
-        legend.title=element_blank(),
-        legend.justification=c(1,0), legend.position=c(0.3,0.7),
-        legend.key.size = unit(1,'lines'),
-        legend.background=element_rect(fill=NA, colour=NA),
-        strip.text = element_text(size=14),
-        strip.background = element_rect(colour="black", fill = "white"),
-        panel.spacing = unit(0.25, "lines"))
-
-Eas<-data.frame(Soil=c(rep("Plesne", times=5), rep("Certovo", times=5)),
-                horizon=rep(c(rep("Litter", 2), rep("Organic soil", 3)), times=2),
-                Origin=rep(c("Native", "Transplanted", "Native", "Transplanted", "Control"), times=2),
-                Ea=c(coef(Ts_plo_native)[2], coef(Ts_plo_trans)[2], coef(Ts_pla_native)[2], coef(Ts_pla_trans)[2], coef(Ts_plc)[2],
-                     coef(Ts_cto_native)[2], coef(Ts_cto_trans)[2], coef(Ts_cta_native)[2], coef(Ts_cta_trans)[2], coef(Ts_ctc)[2]),
-                Ea.se=c(summary(Ts_plo_native)$coefficients[4],
-                        summary(Ts_plo_trans)$coefficients[4],
-                        summary(Ts_pla_native)$coefficients[4],
-                        summary(Ts_pla_trans)$coefficients[4],
-                        summary(Ts_plc)$coefficients[4],
-                        summary(Ts_cto_native)$coefficients[4],
-                        summary(Ts_cto_trans)$coefficients[4],
-                        summary(Ts_cta_native)$coefficients[4],
-                        summary(Ts_cta_trans)$coefficients[4],
-                        summary(Ts_ctc)$coefficients[4]))
-
-Eas[Eas$Origin=="Control", "horizon"]<-c("Litter")
-
-ggplot(Eas, aes(Origin, -Ea/1000))+geom_point(cex=6, aes(colour=Soil))+
-  facet_grid(.~horizon)+
-  geom_errorbar(aes(ymin=-(Ea-Ea.se)/1000, ymax=-(Ea+Ea.se)/1000, colour=Soil), width=0.1)+
-  ylab(expression(paste(E[A], " (kJ ", mol^{-1}, ")")))+
-  theme_bw()+
-  theme(axis.line.x = element_blank(),
-        axis.line.y =element_blank(),
-        plot.background=element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.text.y = element_text(size=14,colour="black"),
-        axis.text.x = element_text(size=14,colour="black"),
-        axis.title.y = element_text(size=14,colour="black"),
-        axis.title.x = element_blank(),
-        legend.text=element_text(size=14,colour="black"),
-        legend.title=element_blank(),
-        legend.justification=c(1,0), legend.position=c(0.2,0.8),
-        legend.key.size = unit(1,'lines'),
-        legend.background=element_rect(fill=NA, colour=NA),
-        strip.text = element_text(size=14),
-        strip.background = element_rect(colour="black", fill = "white"),
-        panel.spacing = unit(0.25, "lines"))
