@@ -3,6 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(FME)
 library(DEoptim)
+library(segmented)
 
 #Reading data
 #Respirations
@@ -563,15 +564,125 @@ write.csv(resp_all, "merged_data.csv")
 
 
 #In the following function, three different linear models are defined and fitted to the data
-#First model do not assume effect of water content, the second two does. 
-#First model assumes polynomial relationship between respiration rate and relative water content
-#The second model assumes piecewise linear relationship 
+#First model do not assume effect of water content, the second two do. 
+#First model assumes linear relationship between respiration rate and relative water content
+#The second model assumes polynomial linear relationship .
 #fit of the models are compared for each soil core separately
 
 
 #Read the function
 source("./R_functions/TW.R")
 
-TW_test2<-TW(resp_all[(resp_all$Soil=="Plesne" & resp_all$Origin=="Native" & resp_all$horizon=="Litter"), ])
-TW_test2$Gfit  
+TW_out<-TW(resp_all)
+
+#Results
+summary(TW_out$R2$TempWlin-TW_out$R2$Temp>0)#36/50=72%
+summary(TW_out$R2$TempWpoly-TW_out$R2$Temp>0)#41/50=82%
+summary(TW_out$R2$TempWpoly-TW_out$R2$TempWlin>0)#34/50=68%
+
+summary(TW_out$AIC$TempWlin-TW_out$AIC$Temp<0)#31/50=62%
+summary(TW_out$AIC$TempWpoly-TW_out$AIC$Temp<0)#33/50=60%
+summary(TW_out$AIC$TempWpoly-TW_out$AIC$TempWlin<0)#27/50=54%
+
+for(i in 1:50){
+  print(TW_out$anova_comp[[i]])
+}
+for(i in 1:50){
+  print(TW_out$AIC_comp[[i]])
+}
+
+#Now, the intercept and slope of increase/decrease of soil moisture 24 hours before the measurement 
+#is added to the data frame as an explanatory variable
+#slope and intercept have units of moisture per g dry weight and will be recalculated later 
+#24 hours is selected based on the model excercise of Evans et al. (2016) SBB
+#At the same time, mean temperature of the soil surface during preceding month
+#is added to the data frame
+
+#Three new columns are dedined - moisture inetrcept (Win) and slope (Wsl), and median surface 
+#temperature (Tm)
+resp_all$Win<-numeric(length = nrow(resp_all))
+resp_all$Wsl<-numeric(length = nrow(resp_all))
+resp_all$Tm<-numeric(length = nrow(resp_all))
+
+#1. Plesne
+##Litter (PLO1 - 5, CTO1 - 5)
+##Organic soil (PLA1 - 5, CTA1 - 5)
+##Controls (PLC1 - 5)
+
+#2. Certovo
+##Litter (PLO6 - 10, CTO6 - 10)
+##Organic soil (PLA6 - 10, CTA6 - 10)
+##Controls (PLC6 - 10)
+
+for(i in 1:nrow(resp_all)){
+  tryCatch({
+    
+  if(as.factor(resp_all$Block[i])=="1" |
+     as.factor(resp_all$Block[i])=="2" |
+     as.factor(resp_all$Block[i])=="3" |
+     as.factor(resp_all$Block[i])=="4" |
+     as.factor(resp_all$Block[i])=="5"){
+    
+    #First, find the date and block in PLOenv dataframe
+    p<-which(PLOenv$Block==resp_all[i, "Block"] &
+               as.character(PLOenv$time)==as.character(resp_all[i, "time"]))
+    #Extract moisture data from previous day
+    if(p-96>0){
+      Wrunning<-as.numeric(PLOenv[c((p-96):p), "W"])
+    }else{
+      Wrunning<-as.numeric(PLOenv[c(1:p), "W"])
+    }
+    
+    #Run linear regression and add the results to Win and Wsl
+    resp_all[i, "Win"]<-coef(lm(Wrunning~seq(0, 24, by = 0.25)))[1]
+    resp_all[i, "Wsl"]<-coef(lm(Wrunning~seq(0, 24, by = 0.25)))[2]
+    #Extract Tsurface data from previous month and add the median to Tm
+    if(p-2880>0){
+      resp_all[i, "Tm"]<-median(as.numeric(PLOenv[c((p-2880):p), "Tsurface"]), na.rm=T)
+    }else{
+      resp_all[i, "Tm"]<-median(as.numeric(PLOenv[c(1:p), "Tsurface"]), na.rm=T)
+    }
+    
+    print(i)
+  }else{
+    p<-which(CTOenv$Block==resp_all[i, "Block"] &
+               as.character(CTOenv$time)==as.character(resp_all[i, "time"]))
+    #Extract moisture data from previous day
+    if(p-96>0){
+      Wrunning<-as.numeric(PLOenv[c((p-96):p), "W"])
+    }else{
+      Wrunning<-as.numeric(PLOenv[c(1:p), "W"])
+    }
+    
+    #Run linear regression and add the results to Win and Wsl
+    resp_all[i, "Win"]<-coef(lm(Wrunning~seq(0, 24, by = 0.25)))[1]
+    resp_all[i, "Wsl"]<-coef(lm(Wrunning~seq(0, 24, by = 0.25)))[2]
+    #Extract Tsurface data from previous month and add the median to Tm
+    if(p-2880>0){
+      resp_all[i, "Tm"]<-median(as.numeric(CTOenv[c((p-2880):p), "Tsurface"]), na.rm=T)
+    }else{
+      resp_all[i, "Tm"]<-median(as.numeric(CTOenv[c(1:p), "Tsurface"]), na.rm=T)
+    }
+    print(i)
+  }
+    }, error=function(e){cat("Something is wrong with", print(i))})
+}
+
+
+#Rows 324 - 328 finished with error - will end with NA
+resp_all[c(324:328), "Win"]<-NA
+resp_all[c(324:328), "Wsl"]<-NA
+resp_all[c(324:328), "Tm"]<-NA
+
+summary(resp_all)
+
+#The gravimetric water content intercept is recalculated to volumetric water content cm3/cm3 (theta)
+resp_all$theta_in<-with(resp_all, Win/(1-Win)*Soil_mass/Volume)
+#and normalized to pore space
+resp_all$theta_rel_in<-with(resp_all, theta_in/phi)
+
+#The slope of change of gravimetric water content is recalculated to change in relative volumetric
+#water content change (cm3/cm3 of total pore space) in % per h
+resp_all$theta_rel_sl<-with(resp_all, Wsl/(1-Wsl)*Soil_mass/Volume/phi*100)
+
 
