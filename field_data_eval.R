@@ -4,6 +4,7 @@ library(ggplot2)
 library(FME)
 library(DEoptim)
 library(segmented)
+library(lme4)
 
 #Reading data
 #Respirations
@@ -433,7 +434,7 @@ resp_all[resp_all$outliers=="NO", ] %>% group_by(Soil, Origin, horizon) %>% summ
                                                            HR_mass=mean(resp_mass, na.rm = T),
                                                            HR_vol=mean(resp_vol, na.rm = T))
 
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #############################################Statistics###############################################
 #correspondence function
 correspondence<-function(obs, pred, N){
@@ -447,7 +448,7 @@ correspondence<-function(obs, pred, N){
   return(out)
 }
 
-######################################Non-linear modelling#######################################
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #Soil warming is associated with soil drying:
 
 ggplot(resp_all, aes(Tair, W))+geom_point(aes(colour=horizon))+facet_grid(Soil~Origin)+
@@ -685,4 +686,118 @@ resp_all$theta_rel_in<-with(resp_all, theta_in/phi)
 #water content change (cm3/cm3 of total pore space) in % per h
 resp_all$theta_rel_sl<-with(resp_all, Wsl/(1-Wsl)*Soil_mass/Volume/phi*100)
 
+#Define the position of transplants/controls within catchments
+resp_all$Catchment<-ifelse(resp_all$Block<=5, "Plesne", "Certovo")
+#Mark controls as they are bit different
+resp_all$Control<-ifelse(resp_all$Origin=="Control", "TRUE", "FALSE")
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#basic model
+#Using soil surface temperature as an explanatory variable
+resp_all$Temp<-1/(resp_all$Tsurface+273.15)/8.314
+
+m0<-lmer(log(resp_corr)~Temp+poly(theta_rel, 2, raw = TRUE)+(1|Block), 
+         resp_all[resp_all$outliers=="NO", ])
+
+summary(m0)
+correspondence(obs = resp_all[(!is.na(resp_all$theta_rel) & resp_all$outliers=="NO"), "resp_corr"], 
+               pred = exp(predict(m0, new.data = resp_all[(!is.na(resp_all$theta_rel) & resp_all$outliers=="NO"),])),
+               N = 6)
+
+##Testing hypotheses
+###1. Are controls higher?
+m1a<-update(m0, .~.+Control)
+summary(m1a)
+
+correspondence(obs = resp_all[(!is.na(resp_all$theta_rel) & resp_all$outliers=="NO"), "resp_corr"], 
+               pred = exp(predict(m1a, new.data = resp_all[(!is.na(resp_all$theta_rel) & resp_all$outliers=="NO"),])),
+               N = 7)
+anova(m0, m1a)
+
+###2. Is there any difference between the measurements taken at different catchments?
+m1b<-update(m0, .~.+Catchment)
+summary(m1b)
+anova(m1b)
+
+###3. Is there any difference between the horizons?
+m1c<-update(m0, .~.+horizon)
+summary(m1c)
+anova(m1c)
+
+
+###################################Controls separately######################################
+mc0<-lmer(log(resp_corr)~Temp+poly(theta_rel, 2, raw = TRUE)+(1|Block), 
+          resp_all[(resp_all$outliers=="NO" & !is.na(resp_all$theta_rel)), ], 
+          subset = Control=="TRUE")
+
+summary(mc0)
+
+#It seems that the moisture doesn't play a role - test its absence and linear term
+mc0a<-lmer(log(resp_corr)~Temp+theta_rel+(1|Block), 
+           resp_all[(resp_all$outliers=="NO" & !is.na(resp_all$theta_rel)), ], 
+           subset = Control=="TRUE")
+summary(mc0a)
+
+mc0b<-lmer(log(resp_corr)~Temp+(1|Block), 
+           resp_all[(resp_all$outliers=="NO" & !is.na(resp_all$theta_rel)), ], 
+           subset = Control=="TRUE")
+summary(mc0b)
+
+anova(mc0, mc0b)
+#Test indicates no effect of moisture on respiration rate of controls
+#Refit the null model
+mc0<-lmer(log(resp_corr)~Temp+(1|Block), 
+          resp_all[(resp_all$outliers=="NO"), ], 
+          subset = Control=="TRUE")
+
+correspondence(obs = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), "resp_corr"], 
+               pred = exp(predict(mc0, new.data = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), "resp_corr"])),
+               N = 2+2)
+
+#Is there a difference between the catchments?
+mc1<-update(mc0, .~.+Catchment)
+summary(mc1)
+anova(mc1)
+anova(mc1, mc0)
+
+correspondence(obs = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), "resp_corr"], 
+               pred = exp(predict(mc1, new.data = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), "resp_corr"])),
+               N = 3+2)
+
+#Is there a difference in the temperature sensitivity between the catchments?
+mc2<-update(mc0, .~.:Catchment)
+summary(mc2)
+anova(mc2)
+anova(mc0, mc2)
+
+correspondence(obs = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), "resp_corr"], 
+               pred = exp(predict(mc2, new.data = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), "resp_corr"])),
+               N = 3+2)
+
+#Is there an effect of changing soil moisture change?
+mc3a<-update(mc0, .~.+theta_rel_sl)
+summary(mc3a)
+anova(mc3a)
+anova(mc3a, mc0)
+
+mc3b<-update(mc0, .~.+theta_rel_in)
+summary(mc3b)
+anova(mc3b)
+anova(mc3b, mc0)
+
+#Does the changing soil moisture change temperature sensitivity?
+mc4a<-update(mc0, .~.:theta_rel_sl)
+summary(mc4a)
+anova(mc4a)
+anova(mc4a, mc0)
+
+mc4b<-update(mc0, .~.:theta_rel_in)
+summary(mc4b)
+anova(mc4b)
+anova(mc4b, mc0)
+
+#Does the previous temperature regime change temperature sensitivity?
+mc5<-update(mc0, .~.:Tm)
+summary(mc5)
+anova(mc5)
+anova(mc5, mc0)
