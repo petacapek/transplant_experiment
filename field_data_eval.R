@@ -750,8 +750,10 @@ mc0<-lmer(log(resp_corr)~Temp+(1|Block),
           resp_all[(resp_all$outliers=="NO"), ], 
           subset = Control=="TRUE")
 
-correspondence(obs = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), "resp_corr"], 
-               pred = exp(predict(mc0, new.data = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), "resp_corr"])),
+correspondence(obs = resp_all[(resp_all$Control=="TRUE" & 
+                                 resp_all$outliers=="NO" &
+                                 !is.na(resp_all$Temp)), "resp_corr"], 
+               pred = exp(predict(mc0, new.data = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), ])),
                N = 2+2)
 
 #Is there a difference between the catchments?
@@ -760,9 +762,13 @@ summary(mc1)
 anova(mc1)
 anova(mc1, mc0)
 
-correspondence(obs = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), "resp_corr"], 
-               pred = exp(predict(mc1, new.data = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), "resp_corr"])),
+correspondence(obs = resp_all[(resp_all$Control=="TRUE" & 
+                                 resp_all$outliers=="NO" &
+                                 !is.na(resp_all$Temp)), "resp_corr"], 
+               pred = exp(predict(mc1, new.data = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), ])),
                N = 3+2)
+#The difference between the catchments is
+exp(fixef(mc1)[3])
 
 #Is there a difference in the temperature sensitivity between the catchments?
 mc2<-update(mc0, .~.:Catchment)
@@ -770,8 +776,10 @@ summary(mc2)
 anova(mc2)
 anova(mc0, mc2)
 
-correspondence(obs = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), "resp_corr"], 
-               pred = exp(predict(mc2, new.data = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), "resp_corr"])),
+correspondence(obs = resp_all[(resp_all$Control=="TRUE" & 
+                                 resp_all$outliers=="NO" &
+                                 !is.na(resp_all$Temp)), "resp_corr"], 
+               pred = exp(predict(mc2, new.data = resp_all[(resp_all$Control=="TRUE" & resp_all$outliers=="NO"), ])),
                N = 3+2)
 
 #Is there an effect of changing soil moisture change?
@@ -801,3 +809,54 @@ mc5<-update(mc0, .~.:Tm)
 summary(mc5)
 anova(mc5)
 anova(mc5, mc0)
+
+###################################Transplants separately######################################
+mt0<-lmer(log(resp_corr)~Temp+poly(theta_rel, 2, raw = TRUE)+(1|Block), 
+          resp_all[(resp_all$outliers=="NO" & !is.na(resp_all$theta_rel)), ], 
+          subset = Control=="FALSE", na.action = na.omit)
+summary(mt0)
+anova(mt0)
+correspondence(obs = resp_all[(resp_all$Control=="FALSE" & 
+                                 resp_all$outliers=="NO" &
+                                 !is.na(resp_all$theta_rel)), "resp_corr"], 
+               pred = exp(predict(mt0, new.data = resp_all[(resp_all$Control=="FALSE" & 
+                                                              resp_all$outliers=="NO"), ])),
+               N = 3)
+
+#Testing the additive effects
+##Is there a difference between horizons?
+mt1<-update(mt0, .~.+horizon)
+summary(mt1)
+anova(mt1)
+anova(mt1, mt0)
+correspondence(obs = resp_all[(resp_all$Control=="FALSE" & 
+                                 resp_all$outliers=="NO" &
+                                 !is.na(resp_all$theta_rel)), "resp_corr"], 
+               pred = exp(predict(mt1, new.data = resp_all[(resp_all$Control=="FALSE" & 
+                                                              resp_all$outliers=="NO"), ])),
+               N = 4)
+
+###The difference is exp(fixef(mt1)[5]) = 1.48 
+
+##Is there a difference between catchments?
+mt2a<-update(mt0, .~.+Catchment)
+summary(mt2a)#NO
+mt2b<-update(mt1, .~.+Catchment)
+summary(mt2b)#NO
+
+#Is there a difference between soils?
+mt3a<-update(mt0, .~.+Soil)
+summary(mt3a)#WEEK
+mt3b<-update(mt1, .~.+Soil)
+summary(mt3b)#WEEK
+
+anova(mt0, mt1, mt3a, mt3b)
+
+correspondence(obs = resp_all[(resp_all$Control=="FALSE" & 
+                                 resp_all$outliers=="NO" &
+                                 !is.na(resp_all$theta_rel)), "resp_corr"], 
+               pred = exp(predict(mt3b, new.data = resp_all[(resp_all$Control=="FALSE" & 
+                                                              resp_all$outliers=="NO"), ])),
+               N = 4)
+#Change is small
+
