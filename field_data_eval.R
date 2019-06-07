@@ -860,3 +860,40 @@ correspondence(obs = resp_all[(resp_all$Control=="FALSE" &
                N = 4)
 #Change is small
 
+#Origin?
+mt3a_2<-update(mt0, .~.+Origin)
+summary(mt3a_2)#WEEK
+mt3b_2<-update(mt1, .~.+Origin)
+summary(mt3b_2)#WEEK
+correspondence(obs = resp_all[(resp_all$Control=="FALSE" & 
+                                 resp_all$outliers=="NO" &
+                                 !is.na(resp_all$theta_rel)), "resp_corr"], 
+               pred = exp(predict(mt3b_2, new.data = resp_all[(resp_all$Control=="FALSE" & 
+                                                               resp_all$outliers=="NO"), ])),
+               N = 5)
+anova(mt0, mt1, mt3b_2, mt3a_2)
+
+#Changing moisture effect?
+mt4a<-update(mt0, .~.+Wsl)
+summary(mt4a)#Very week
+mt4b<-update(mt1, .~.+Wsl)
+summary(mt4b)#Very week
+
+mt4a_2<-update(mt0, .~.+Win)
+summary(mt4a_2)#Very week
+mt4b_2<-update(mt1, .~.+Win)
+summary(mt4b_2)#NO
+
+#Mean temperature in previous month?
+mt5a<-update(mt0,. ~.+Tm)
+summary(mt5a)#NO
+mt5b<-update(mt1,. ~.+Tm)
+summary(mt5b)#NO
+
+#Year
+mt6a<-update(mt0,. ~.+Year)
+summary(mt6a)#NO
+mt6b<-update(mt1,. ~.+Year)
+summary(mt6b)#NO
+
+#Testing the combined effects - temperature sensitivity
