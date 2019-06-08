@@ -1,0 +1,241 @@
+Year,Period,ID,Pmin,Horizon2
+2017,Summer,PLO_1,8.744704358,Litter
+2017,Summer,PLO_2,42.26466732,Litter
+2017,Summer,PLO_3,47.03025859,Litter
+2017,Summer,PLO_4,8.764155751,Litter
+2017,Summer,PLO_5,49.26716877,Litter
+2017,Summer,PLO_6,8.608544608,Litter
+2017,Summer,PLO_7,49.07265484,Litter
+2017,Summer,PLO_8,9.444954503,Litter
+2017,Summer,PLO_9,49.65619663,Litter
+2017,Summer,PLO_10,48.1000852,Litter
+2017,Summer,PLA_1,41.38935464,Organic soil
+2017,Summer,PLA_2,34.67862409,Organic soil
+2017,Summer,PLA_3,7.558169391,Organic soil
+2017,Summer,PLA_4,6.663405316,Organic soil
+2017,Summer,PLA_5,5.165648062,Organic soil
+2017,Summer,PLA_6,4.971134133,Organic soil
+2017,Summer,PLA_7,4.095821452,Organic soil
+2017,Summer,PLA_8,23.88310102,Organic soil
+2017,Summer,PLA_9,37.49907606,Organic soil
+2017,Summer,PLA_10,45.47414715,Organic soil
+2017,Summer,PLC_1,7.402558247,Litter
+2017,Summer,PLC_1,1.061404157,Litter
+2017,Summer,PLC_2,5.321259205,Litter
+2017,Summer,PLC_2,1.022501371,Litter
+2017,Summer,PLC_3,2.423001661,Litter
+2017,Summer,PLC_3,2.48135584,Litter
+2017,Summer,PLC_4,5.613030099,Litter
+2017,Summer,PLC_4,1.917265445,Litter
+2017,Summer,PLC_5,1.664397337,Litter
+2017,Summer,PLC_5,,Litter
+2017,Summer,PLC_1,9.153183609,Organic soil
+2017,Summer,PLC_1,3.08434902,Organic soil
+2017,Summer,PLC_2,2.909286484,Organic soil
+2017,Summer,PLC_2,3.006543449,Organic soil
+2017,Summer,PLC_3,2.987092056,Organic soil
+2017,Summer,PLC_3,7.169141532,Organic soil
+2017,Summer,PLC_4,2.228487732,Organic soil
+2017,Summer,PLC_4,6.02150935,Organic soil
+2017,Summer,PLC_5,4.582106275,Organic soil
+2017,Summer,PLC_5,1.430980623,Organic soil
+2017,Summer,CTO_1,33.90056837,Litter
+2017,Summer,CTO_2,5.846446814,Litter
+2017,Summer,CTO_3,7.908294463,Litter
+2017,Summer,CTO_4,25.92549727,Litter
+2017,Summer,CTO_5,8.647447394,Litter
+2017,Summer,CTO_6,33.12251265,Litter
+2017,Summer,CTO_7,5.55467592,Litter
+2017,Summer,CTO_8,47.90557127,Litter
+2017,Summer,CTO_9,35.16490891,Litter
+2017,Summer,CTO_10,33.12251265,Litter
+2017,Summer,CTA_1,44.59883447,Organic soil
+2017,Summer,CTA_2,31.56640122,Organic soil
+2017,Summer,CTA_3,24.7584137,Organic soil
+2017,Summer,CTA_4,16.88059957,Organic soil
+2017,Summer,CTA_5,5.146196669,Organic soil
+2017,Summer,CTA_6,5.963155172,Organic soil
+2017,Summer,CTA_7,29.71851889,Organic soil
+2017,Summer,CTA_8,32.53897087,Organic soil
+2017,Summer,CTA_9,36.81827731,Organic soil
+2017,Summer,CTA_10,28.25966442,Organic soil
+2017,Summer,CTC_1,1.450432015,Litter
+2017,Summer,CTC_1,3.123251806,Litter
+2017,Summer,CTC_2,1.644945945,Litter
+2017,Summer,CTC_2,2.306293304,Litter
+2017,Summer,CTC_3,3.142703199,Litter
+2017,Summer,CTC_3,0.847438835,Litter
+2017,Summer,CTC_4,2.675869769,Litter
+2017,Summer,CTC_4,0.886341621,Litter
+2017,Summer,CTC_5,2.831480912,Litter
+2017,Summer,CTC_5,,Organic soil
+2017,Summer,CTC_1,2.753675341,Organic soil
+2017,Summer,CTC_1,2.053425196,Organic soil
+2017,Summer,CTC_2,1.197563908,Organic soil
+2017,Summer,CTC_2,1.625494552,Organic soil
+2017,Summer,CTC_3,1.392077837,Organic soil
+2017,Summer,CTC_3,1.625494552,Organic soil
+2017,Summer,CTC_4,5.593578706,Organic soil
+2017,Summer,CTC_4,1.917265445,Organic soil
+2017,Summer,CTC_5,3.920758916,Organic soil
+2017,Summer,CTC_5,3.667890808,Organic soil
+2018,Winter,PLO_1,17.42212835,Litter
+2018,Winter,PLO_2,25.26753184,Litter
+2018,Winter,PLO_3,15.53923151,Litter
+2018,Winter,PLO_4,23.384635,Litter
+2018,Winter,PLO_5,15.43462613,Litter
+2018,Winter,PLO_6,21.08331664,Litter
+2018,Winter,PLO_7,15.53923151,Litter
+2018,Winter,PLO_8,14.17936158,Litter
+2018,Winter,PLO_9,18.36357677,Litter
+2018,Winter,PLO_10,16.89910145,Litter
+2018,Winter,PLA_1,30.70701159,Organic soil
+2018,Winter,PLA_2,24.4306888,Organic soil
+2018,Winter,PLA_3,9.995146384,Organic soil
+2018,Winter,PLA_4,30.28859007,Organic soil
+2018,Winter,PLA_5,21.92015968,Organic soil
+2018,Winter,PLA_6,36.66951824,Organic soil
+2018,Winter,PLA_7,9.367514105,Organic soil
+2018,Winter,PLA_8,41.16754957,Organic soil
+2018,Winter,PLA_9,25.05832108,Organic soil
+2018,Winter,PLA_10,42.52741951,Organic soil
+2018,Winter,PLC_1,5.158111747,Litter
+2018,Winter,PLC_1,4.969822064,Litter
+2018,Winter,PLC_2,5.199953899,Litter
+2018,Winter,PLC_2,4.46771624,Litter
+2018,Winter,PLC_3,5.451006811,Litter
+2018,Winter,PLC_3,4.384031937,Litter
+2018,Winter,PLC_4,5.325480355,Litter
+2018,Winter,PLC_4,8.777457889,Litter
+2018,Winter,PLC_5,4.802453456,Litter
+2018,Winter,PLC_5,4.865216684,Litter
+2018,Winter,PLC_1,9.279563712,Organic soil
+2018,Winter,PLC_1,8.631010357,Organic soil
+2018,Winter,PLC_2,5.074427443,Organic soil
+2018,Winter,PLC_2,6.246007697,Organic soil
+2018,Winter,PLC_3,5.785744026,Organic soil
+2018,Winter,PLC_3,4.969822064,Organic soil
+2018,Winter,PLC_4,5.743901874,Organic soil
+2018,Winter,PLC_4,5.806665102,Organic soil
+2018,Winter,PLC_5,4.614163772,Organic soil
+2018,Winter,PLC_5,4.488637316,Organic soil
+2018,Winter,CTO_1,19.30502519,Litter
+2018,Winter,CTO_2,19.93265747,Litter
+2018,Winter,CTO_3,6.229352711,Litter
+2018,Winter,CTO_4,18.36357677,Litter
+2018,Winter,CTO_5,14.28396696,Litter
+2018,Winter,CTO_6,12.08725398,Litter
+2018,Winter,CTO_7,11.04120018,Litter
+2018,Winter,CTO_8,15.43462613,Litter
+2018,Winter,CTO_9,13.23791316,Litter
+2018,Winter,CTO_10,13.97015082,Litter
+2018,Winter,CTA_1,39.18004735,Organic soil
+2018,Winter,CTA_2,32.6945138,Organic soil
+2018,Winter,CTA_3,34.05438374,Organic soil
+2018,Winter,CTA_4,14.5977831,Organic soil
+2018,Winter,CTA_5,10.4135679,Organic soil
+2018,Winter,CTA_6,29.45174703,Organic soil
+2018,Winter,CTA_7,46.1886078,Organic soil
+2018,Winter,CTA_8,47.44387236,Organic soil
+2018,Winter,CTA_9,42.94584103,Organic soil
+2018,Winter,CTA_10,54.13861667,Organic soil
+2018,Winter,CTC_1,9.551537699,Litter
+2018,Winter,CTC_1,4.342189785,Litter
+2018,Winter,CTC_2,5.618375418,Litter
+2018,Winter,CTC_2,5.053506367,Litter
+2018,Winter,CTC_3,4.132979025,Litter
+2018,Winter,CTC_3,4.656005924,Litter
+2018,Winter,CTC_4,3.317057063,Litter
+2018,Winter,CTC_4,4.112057949,Litter
+2018,Winter,CTC_5,4.656005924,Litter
+2018,Winter,CTC_5,4.007452569,Organic soil
+2018,Winter,CTC_1,3.881926113,Organic soil
+2018,Winter,CTC_1,5.241796051,Organic soil
+2018,Winter,CTC_2,4.718769152,Organic soil
+2018,Winter,CTC_2,5.095348519,Organic soil
+2018,Winter,CTC_3,4.216663329,Organic soil
+2018,Winter,CTC_3,3.735478582,Organic soil
+2018,Winter,CTC_4,3.735478582,Organic soil
+2018,Winter,CTC_4,3.902847189,Organic soil
+2018,Winter,CTC_5,3.881926113,Organic soil
+2018,Winter,CTC_5,6.204165545,Organic soil
+2018,Summer,PLO_1,46.4726849,Litter
+2018,Summer,PLO_2,43.37565262,Litter
+2018,Summer,PLO_3,53.55161583,Litter
+2018,Summer,PLO_4,50.67580014,Litter
+2018,Summer,PLO_5,75.69047566,Litter
+2018,Summer,PLO_6,61.5326138,Litter
+2018,Summer,PLO_7,51.7818831,Litter
+2018,Summer,PLO_8,50.01215037,Litter
+2018,Summer,PLO_9,68.39032814,Litter
+2018,Summer,PLO_10,67.72667837,Litter
+2018,Summer,PLA_1,85.42400569,Organic soil
+2018,Summer,PLA_2,118.827711,Organic soil
+2018,Summer,PLA_3,82.32697341,Organic soil
+2018,Summer,PLA_4,52.33492458,Organic soil
+2018,Summer,PLA_5,100.9091671,Organic soil
+2018,Summer,PLA_6,108.4305312,Organic soil
+2018,Summer,PLA_7,100.6879505,Organic soil
+2018,Summer,PLA_8,96.70605186,Organic soil
+2018,Summer,PLA_9,124.800559,Organic soil
+2018,Summer,PLA_10,100.4667339,Organic soil
+2018,Summer,PLC_1,11.85228832,Litter
+2018,Summer,PLC_1,7.759781377,Litter
+2018,Summer,PLC_2,15.50236208,Litter
+2018,Summer,PLC_2,19.04182755,Litter
+2018,Summer,PLC_3,7.538564786,Litter
+2018,Summer,PLC_3,8.976472631,Litter
+2018,Summer,PLC_4,7.980997969,Litter
+2018,Summer,PLC_4,10.74620536,Litter
+2018,Summer,PLC_5,20.70095198,Litter
+2018,Summer,PLC_5,5.879440349,Litter
+2018,Summer,PLC_1,12.95837128,Organic soil
+2018,Summer,PLC_1,15.72357867,Organic soil
+2018,Summer,PLC_2,17.49331141,Organic soil
+2018,Summer,PLC_2,16.82966163,Organic soil
+2018,Summer,PLC_3,8.644647744,Organic soil
+2018,Summer,PLC_3,15.1705372,Organic soil
+2018,Summer,PLC_4,35.19063873,Organic soil
+2018,Summer,PLC_4,49.56971719,Organic soil
+2018,Summer,PLC_5,25.67832529,Organic soil
+2018,Summer,PLC_5,15.94479527,Organic soil
+2018,Summer,CTO_1,52.44553288,Litter
+2018,Summer,CTO_2,51.7818831,Litter
+2018,Summer,CTO_3,51.11823333,Litter
+2018,Summer,CTO_4,39.61497056,Litter
+2018,Summer,CTO_5,67.50546177,Litter
+2018,Summer,CTO_6,47.24694297,Litter
+2018,Summer,CTO_7,50.67580014,Litter
+2018,Summer,CTO_8,43.37565262,Litter
+2018,Summer,CTO_9,50.67580014,Litter
+2018,Summer,CTO_10,46.36207661,Litter
+2018,Summer,CTA_1,47.13633468,Organic soil
+2018,Summer,CTA_2,94.71510254,Organic soil
+2018,Summer,CTA_3,78.56629135,Organic soil
+2018,Summer,CTA_4,89.40590434,Organic soil
+2018,Summer,CTA_5,68.16911155,Organic soil
+2018,Summer,CTA_6,72.1510102,Organic soil
+2018,Summer,CTA_7,52.66674947,Organic soil
+2018,Summer,CTA_8,52.33492458,Organic soil
+2018,Summer,CTA_9,31.65117327,Organic soil
+2018,Summer,CTA_10,71.26614383,Organic soil
+2018,Summer,CTC_1,8.644647744,Litter
+2018,Summer,CTC_1,7.317348194,Litter
+2018,Summer,CTC_2,8.865864335,Litter
+2018,Summer,CTC_2,7.538564786,Litter
+2018,Summer,CTC_3,20.81156028,Litter
+2018,Summer,CTC_3,9.750730701,Litter
+2018,Summer,CTC_4,19.37365244,Litter
+2018,Summer,CTC_4,31.98299815,Litter
+2018,Summer,CTC_5,9.750730701,Litter
+2018,Summer,CTC_5,29.10718246,Organic soil
+2018,Summer,CTC_1,14.72810401,Organic soil
+2018,Summer,CTC_1,38.39827931,Organic soil
+2018,Summer,CTC_2,14.39627912,Organic soil
+2018,Summer,CTC_2,8.976472631,Organic soil
+2018,Summer,CTC_3,13.29019617,Organic soil
+2018,Summer,CTC_3,25.78893359,Organic soil
+2018,Summer,CTC_4,29.88144053,Organic soil
+2018,Summer,CTC_4,34.19516407,Organic soil
+2018,Summer,CTC_5,25.89954189,Organic soil
+2018,Summer,CTC_5,38.06645442,Organic soil
