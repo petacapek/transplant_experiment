@@ -36,7 +36,7 @@ summary(as.factor(env$CT_period))
 
 #PLO_1
 plo1<-subset(resp_all, id=="PLO_1")
-plo1[(plo1$Year==2018 & plo1$Tair<15 & plo1$resp_cor>0.3), "outliers"]<-"YES"
+plo1[(plo1$Year==2018 & plo1$Tair<15 & plo1$resp_corr>0.3), "outliers"]<-"YES"
 
 ##statistical model
 plo1$Temp<-1/(plo1$Tair+273.15)/8.314
@@ -98,7 +98,7 @@ ggplot(subset(plo3), aes(Tair, resp))+geom_point(cex=4, aes(colour=as.factor(Yea
 
 #PLO_4
 plo4<-subset(resp_all, id=="PLO_4")
-plo4[(plo4$Year==2017 & plo4$Tair<20 & plo4$Tair>10 & plo4$resp_cor>0.5), "outliers"]<-"YES"
+plo4[(plo4$Year==2017 & plo4$Tair<20 & plo4$Tair>10 & plo4$resp_corr>0.5), "outliers"]<-"YES"
 
 ##statistical model
 plo4$Temp<-1/(plo4$Tair+273.15)/8.314
@@ -154,7 +154,7 @@ ggplot(subset(plo7, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(colo
 
 #PLO_8
 plo8<-subset(resp_all, id=="PLO_8" & !is.na(Tsoil))
-plo8[(plo8$Year==2018 & plo8$Tair<20 & plo8$resp>0.2), "outliers"]<-"YES"
+plo8[(plo8$Year==2018 & plo8$Tair<20 & plo8$resp_corr>0.2), "outliers"]<-"YES"
 
 ##statistical model
 plo8$Temp<-1/(plo8$Tair+273.15)/8.314
@@ -182,7 +182,7 @@ ggplot(subset(plo9, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(colo
 
 #PLO_10
 plo10<-subset(resp_all, id=="PLO_10")
-plo10[(plo10$Year==2018 & plo10$Tair<20 & plo10$Tair>10 & plo10$resp>0.275), "outliers"]<-"YES"
+plo10[(plo10$Year==2018 & plo10$Tair<20 & plo10$Tair>10 & plo10$resp_corr>0.275), "outliers"]<-"YES"
 
 ##statistical model
 plo10$Temp<-1/(plo10$Tair+273.15)/8.314
@@ -196,7 +196,7 @@ ggplot(subset(plo10, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(col
 
 #PLA_1
 pla1<-subset(resp_all, id=="PLA_1")
-pla1[(pla1$Year==2018 & pla1$resp>1), "outliers"]<-"YES"
+pla1[(pla1$Year==2018 & pla1$resp_corr>1), "outliers"]<-"YES"
 
 ##statistical model
 pla1$Temp<-1/(pla1$Tair+273.15)/8.314
@@ -224,7 +224,7 @@ ggplot(subset(pla2, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(colo
 
 #PLA_3
 pla3<-subset(resp_all, id=="PLA_3")
-pla3[(pla3$Tair<20 & pla3$resp>0.4), "outliers"]<-"YES"
+pla3[(pla3$Tair<20 & pla3$resp_corr>0.4), "outliers"]<-"YES"
 
 ##statistical model
 pla3$Temp<-1/(pla3$Tair+273.15)/8.314
@@ -238,7 +238,7 @@ ggplot(subset(pla3, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(colo
 
 #PLA_4
 pla4<-subset(resp_all, id=="PLA_4")
-pla4[(pla4$Tair<20 & pla4$resp>0.9), "outliers"]<-"YES"
+pla4[(pla4$Tair<20 & pla4$resp_corr>0.9), "outliers"]<-"YES"
 
 ##statistical model
 pla4$Temp<-1/(pla4$Tair+273.15)/8.314
@@ -378,7 +378,7 @@ ggplot(subset(plc3, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(colo
 
 #PLC_4
 plc4<-subset(resp_all, id=="PLC_4")
-plc4[(plc4$Tair>20 & plc4$Year==2017 & plc4$resp<0.9), "outliers"]<-"YES"
+plc4[(plc4$Tair>20 & plc4$Year==2017 & plc4$resp_corr<0.9), "outliers"]<-"YES"
 
 ##statistical model
 plc4$Temp<-1/(plc4$Tair+273.15)/8.314
@@ -392,8 +392,8 @@ ggplot(subset(plc4, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(colo
 
 #PLC_5
 plc5<-subset(resp_all, id=="PLC_5")
-plc5[(plc5$Tair>25 & plc5$Year==2018 & plc5$resp<1.25), "outliers"]<-"YES"
-plc5[(plc5$Tair<15 & plc5$Year==2018 & plc5$resp<0.5), "outliers"]<-"YES"
+plc5[(plc5$Tair>25 & plc5$Year==2018 & plc5$resp_corr<1.25), "outliers"]<-"YES"
+plc5[(plc5$Tair<15 & plc5$Year==2018 & plc5$resp_corr<0.5), "outliers"]<-"YES"
 
 ##statistical model
 plc5$Temp<-1/(plc5$Tair+273.15)/8.314
@@ -407,7 +407,7 @@ ggplot(subset(plc5, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(colo
 
 #CTO_1
 cto1<-subset(resp_all, id=="CTO_1")
-cto1[(cto1$Tair>25 & cto1$resp<0.1), "outliers"]<-"YES"
+cto1[(cto1$Tair>25 & cto1$resp_corr<0.1), "outliers"]<-"YES"
 
 ##statistical model
 cto1$Temp<-1/(cto1$Tair+273.15)/8.314
@@ -505,7 +505,7 @@ ggplot(subset(cto7, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(colo
 
 #CTO_8
 cto8<-subset(resp_all, id=="CTO_8")
-cto8[(cto8$Tair<20 & cto8$resp>0.4 & cto8$Year==2017), "outliers"]<-"YES"
+cto8[(cto8$Tair<20 & cto8$resp_corr>0.4 & cto8$Year==2017), "outliers"]<-"YES"
 
 ##statistical model
 cto8$Temp<-1/(cto8$Tair+273.15)/8.314
@@ -547,7 +547,7 @@ ggplot(subset(cto10, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(col
 
 #CTA_1
 cta1<-subset(resp_all, id=="CTA_1")
-cta1[(cta1$resp>0.55), "outliers"]<-"YES"
+cta1[(cta1$resp_corr>0.55), "outliers"]<-"YES"
 
 ##statistical model
 cta1$Temp<-1/(cta1$Tair+273.15)/8.314
@@ -575,7 +575,7 @@ ggplot(subset(cta2, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(colo
 
 #CTA_3
 cta3<-subset(resp_all, id=="CTA_3")
-cta3[(cta3$resp>0.5 & cta3$Year==2018), "outliers"]<-"YES"
+cta3[(cta3$resp_corr>0.5 & cta3$Year==2018), "outliers"]<-"YES"
 
 ##statistical model
 cta3$Temp<-1/(cta3$Tair+273.15)/8.314
@@ -589,7 +589,7 @@ ggplot(subset(cta3, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(colo
 
 #CTA_4
 cta4<-subset(resp_all, id=="CTA_4")
-cta4[(cta4$resp>0.75 & cta4$Year==2017), "outliers"]<-"YES"
+cta4[(cta4$resp_corr>0.75 & cta4$Year==2017), "outliers"]<-"YES"
 
 ##statistical model
 cta4$Temp<-1/(cta4$Tair+273.15)/8.314
@@ -603,7 +603,7 @@ ggplot(subset(cta4, outliers=="NO"), aes(Tair, resp))+geom_point(cex=4, aes(colo
 
 #CTA_5
 cta5<-subset(resp_all, id=="CTA_5")
-cta5[(cta5$resp<0.4 & cta5$Year==2017 & cta5$Tair>20), "outliers"]<-"YES"
+cta5[(cta5$resp_corr<0.4 & cta5$Year==2017 & cta5$Tair>20), "outliers"]<-"YES"
 
 ##statistical model
 cta5$Temp<-1/(cta5$Tair+273.15)/8.314
@@ -816,23 +816,23 @@ for(i in 1:nrow(Mlist)){
                   PL_period = env_calc[, "PL_period"])
     e$Temp<-1/(e$Tair+273.15)/8.314
     
-    e$resp_pred<-exp(predict(Model_list[[i]], newdata = e))*60*15#per 15 minutes of the measurement
+    e$resp_pred<-exp(predict(Model_list[[i]], newdata = e))/4#per 15 minutes of the measurement
     e$resp_pred.se<-exp(predict(Model_list[[i]], newdata = e)+
-                          predict(Model_list[[i]], newdata = e, se.fit = T)$se.fit)*60*15-
-      exp(predict(Model_list[[i]], newdata = e))*60*15#standard error
+                          predict(Model_list[[i]], newdata = e, se.fit = T)$se.fit)/4-
+      exp(predict(Model_list[[i]], newdata = e))/4#standard error
     ###Summer 2017
-    S2017d<-sum(e[(e$Year==2017 & e$PL_period=="Summer"), "resp_pred"], na.rm=T)*(Mlist$Area[i]/10000)
-    S2017se<-sum(e[(e$Year==2017 & e$PL_period=="Summer"), "resp_pred.se"], na.rm=T)*(Mlist$Area[i]/10000)
+    S2017d<-sum(e[(e$Year==2017 & e$PL_period=="Summer"), "resp_pred"], na.rm=T)/44*1e3
+    S2017se<-sum(e[(e$Year==2017 & e$PL_period=="Summer"), "resp_pred.se"], na.rm=T)/44*1e3
     
     ###Winter 2017 - 2018
     W20178d<-(sum(e[(e$Year==2017 & e$PL_period=="Winter"), "resp_pred"], na.rm=T)+
-                sum(e[(e$Year==2018 & e$PL_period=="Winter"), "resp_pred"], na.rm=T))*(Mlist$Area[i]/10000)
+                sum(e[(e$Year==2018 & e$PL_period=="Winter"), "resp_pred"], na.rm=T))/44*1e3
     W20178se<-(sum(e[(e$Year==2017 & e$PL_period=="Winter"), "resp_pred.se"], na.rm=T)+
-                 sum(e[(e$Year==2018 & e$PL_period=="Winter"), "resp_pred.se"], na.rm=T))*(Mlist$Area[i]/10000)
+                 sum(e[(e$Year==2018 & e$PL_period=="Winter"), "resp_pred.se"], na.rm=T))/44*1e3
     
     ###Summer 2018
-    S2018d<-sum(e[(e$Year==2018 & e$PL_period=="Summer"), "resp_pred"], na.rm=T)*(Mlist$Area[i]/10000)
-    S2018se<-sum(e[(e$Year==2018 & e$PL_period=="Summer"), "resp_pred.se"], na.rm=T)*(Mlist$Area[i]/10000)
+    S2018d<-sum(e[(e$Year==2018 & e$PL_period=="Summer"), "resp_pred"], na.rm=T)/44*1e3
+    S2018se<-sum(e[(e$Year==2018 & e$PL_period=="Summer"), "resp_pred.se"], na.rm=T)/44*1e3
     
     #Store the results
     Cmin_field<-rbind(Cmin_field, data.frame(Cmin = c(S2017d, W20178d, S2018d),
@@ -852,23 +852,23 @@ for(i in 1:nrow(Mlist)){
                   CT_period = env_calc[, "CT_period"])
     e$Temp<-1/(e$Tair+273.15)/8.314
     
-    e$resp_pred<-exp(predict(Model_list[[i]], newdata = e))*60*15#per 15 minutes of the measurement
+    e$resp_pred<-exp(predict(Model_list[[i]], newdata = e))/4#per 15 minutes of the measurement
     e$resp_pred.se<-exp(predict(Model_list[[i]], newdata = e)+
-                          predict(Model_list[[i]], newdata = e, se.fit = T)$se.fit)*60*15-
-      exp(predict(Model_list[[i]], newdata = e))*60*15#standard error
+                          predict(Model_list[[i]], newdata = e, se.fit = T)$se.fit)/4-
+      exp(predict(Model_list[[i]], newdata = e))/4#standard error
     ###Summer 2017
-    S2017d<-sum(e[(e$Year==2017 & e$CT_period=="Summer"), "resp_pred"], na.rm=T)*(Mlist$Area[i]/10000)
-    S2017se<-sum(e[(e$Year==2017 & e$CT_period=="Summer"), "resp_pred.se"], na.rm=T)*(Mlist$Area[i]/10000)
+    S2017d<-sum(e[(e$Year==2017 & e$CT_period=="Summer"), "resp_pred"], na.rm=T)/44*1e3
+    S2017se<-sum(e[(e$Year==2017 & e$CT_period=="Summer"), "resp_pred.se"], na.rm=T)/44*1e3
     
     ###Winter 2017 - 2018
     W20178d<-(sum(e[(e$Year==2017 & e$CT_period=="Winter"), "resp_pred"], na.rm=T)+
-                sum(e[(e$Year==2018 & e$CT_period=="Winter"), "resp_pred"], na.rm=T))*(Mlist$Area[i]/10000)
+                sum(e[(e$Year==2018 & e$CT_period=="Winter"), "resp_pred"], na.rm=T))/44*1e3
     W20178se<-(sum(e[(e$Year==2017 & e$CT_period=="Winter"), "resp_pred.se"], na.rm=T)+
-                 sum(e[(e$Year==2018 & e$CT_period=="Winter"), "resp_pred.se"], na.rm=T))*(Mlist$Area[i]/10000)
+                 sum(e[(e$Year==2018 & e$CT_period=="Winter"), "resp_pred.se"], na.rm=T))/44*1e3
     
     ###Summer 2018
-    S2018d<-sum(e[(e$Year==2018 & e$CT_period=="Summer"), "resp_pred"], na.rm=T)*(Mlist$Area[i]/10000)
-    S2018se<-sum(e[(e$Year==2018 & e$CT_period=="Summer"), "resp_pred.se"], na.rm=T)*(Mlist$Area[i]/10000)
+    S2018d<-sum(e[(e$Year==2018 & e$CT_period=="Summer"), "resp_pred"], na.rm=T)/44*1e3
+    S2018se<-sum(e[(e$Year==2018 & e$CT_period=="Summer"), "resp_pred.se"], na.rm=T)/44*1e3
     
     #Store the results
     Cmin_field<-rbind(Cmin_field, data.frame(Cmin = c(S2017d, W20178d, S2018d),
@@ -889,28 +889,156 @@ IER<-read.csv("IER_field.csv")
 
 All_field<-merge(Cmin_field, IER, by.x = c("Year", "Period", "ID"),
                  by.y = c("Year", "Period", "ID"))
-All_field %>% group_by(Year, Period, Soil, Horizon, Origin, Catchment) %>% 
-  summarize(x = mean(Cmin/1000, na.rm = T), y=mean(Pmin, na.rm = T),
-            x.sd = sd(Cmin/1000, na.rm = T), y.sd=sd(Pmin, na.rm = T)) %>%
-  ggplot(aes(x, y))+geom_point(cex=6, aes(colour = Period))+
-  geom_errorbar(aes(ymin = y-y.sd, ymax=y+y.sd))+
-  geom_errorbarh(aes(xmin = x-x.sd, xmax=x+x.sd))+
-  facet_grid(Soil~Horizon+Origin, scales = "free")+scale_y_log10()+scale_x_log10()+
-  stat_smooth(method = lm, se = F)
-
 All_field$outliers<-"NO"
 All_field[(All_field$Origin=="Native" & All_field$Period=="Summer" &
              All_field$Horizon=="Litter" & All_field$Pmin<10), "outliers"]<-"YES"
 All_field[(All_field$Origin=="Native" & All_field$Period=="Summer" &
              All_field$Horizon=="Organic soil" & All_field$Pmin<10), "outliers"]<-"YES"
 
-ggplot(All_field[All_field$outliers=="NO", ], aes(Cmin/1000, Pmin))+geom_point(cex=6, aes(colour = Horizon, shape=Horizon2))+
+ggplot(All_field[All_field$outliers=="NO", ], aes(Cmin/1000, Pmin))+geom_point(cex=6, aes(colour = Horizon))+
   geom_errorbarh(aes(xmin = Cmin/1000-Cmic.se/1000, xmax=Cmin/1000+Cmic.se/1000))+
-  facet_grid(Soil~Origin+Period, scales = "free")+scale_y_log10()+scale_x_log10()+
+  facet_grid(Soil~Origin+Period)+scale_y_log10()+scale_x_log10()+
   stat_smooth(method = lm, se = F)
 
-ggplot(All_field[(All_field$outliers=="NO" & All_field$Horizon!="Control"), ], 
-       aes(Cmin/1000, Pmin))+geom_point(cex=6, aes(colour = Period))+
+Ccontrols<-All_field[(All_field$Soil=="Certovo" & All_field$Horizon=="Control"), ]
+Ccontrols$Origin<-"Transplanted"
+Ccontrols$Soil<-"Plesne"
+
+Pcontrols<-All_field[(All_field$Soil=="Plesne" & All_field$Horizon=="Control"), ]
+Pcontrols$Origin<-"Transplanted"
+Pcontrols$Soil<-"Certovo"
+
+All_field2<-rbind(All_field, Ccontrols, Pcontrols)
+All_field2$Legend<-All_field2$Horizon
+
+ggplot(All_field2, aes(Cmin/1000, Pmin))+geom_point(cex=6, aes(colour = Legend))+
   geom_errorbarh(aes(xmin = Cmin/1000-Cmic.se/1000, xmax=Cmin/1000+Cmic.se/1000))+
-  facet_grid(Soil~Origin+Horizon, scales = "free")+scale_y_log10()+scale_x_log10()+
-  stat_smooth(method = lm, se = F)
+  facet_grid(Soil~Origin+Period, scales = "free")+scale_y_log10()+scale_x_log10()+
+  stat_smooth(method = lm, se = F)+
+  geom_point(data = All_field2[(All_field2$Origin=="Transplanted" & All_field2$Horizon=="Control"), ],
+             aes(Cmin/1000, Pmin), alpha=0.5, cex=6, colour="grey")+
+  theme_min+
+  ylab(expression(paste(PO[4], " (", mu,"mol ", box^{-1}, ")")))+
+  xlab(expression(paste(CO[2], " (mmol ", box^{-1}, ")")))+
+  geom_text(data=lbplNSa, label = paste("R^2 == ", round(summary(plNS)$adj.r.squared, 2)), parse = T, cex=6)+
+  geom_text(data=lbplNSb, label = "p < 0.001", cex=6)+
+  geom_text(data=lbplTSa, label = paste("R^2 == ", round(summary(plTS)$adj.r.squared, 2)), parse = T, cex=6)+
+  geom_text(data=lbplTSb, label = "p < 0.001", cex=6)+
+  geom_text(data=lbplNWa, label = paste("R^2 == ", round(summary(plNW)$adj.r.squared, 2)), parse = T, cex=6)+
+  geom_text(data=lbplNWb, label = "p < 0.001", cex=6)+
+  geom_text(data=lbplTWa, label = paste("R^2 == ", round(summary(plTW)$adj.r.squared, 2)), parse = T, cex=6)+
+  geom_text(data=lbplTWb, label = "p < 0.001", cex=6)+
+  geom_text(data=lbctNSa, label = paste("R^2 == ", round(summary(ctNS)$adj.r.squared, 2)), parse = T, cex=6)+
+  geom_text(data=lbctNSb, label = "p < 0.001", cex=6)+
+  geom_text(data=lbctTSa, label = paste("R^2 == ", round(summary(ctTS)$adj.r.squared, 2)), parse = T, cex=6)+
+  geom_text(data=lbctTSb, label = "p < 0.001", cex=6)+
+  geom_text(data=lbctNWa, label = paste("R^2 == ", round(summary(ctNW)$adj.r.squared, 2)), parse = T, cex=6)+
+  geom_text(data=lbctNWb, label = "p < 0.001", cex=6)+
+  geom_text(data=lbctTWa, label = paste("R^2 == ", round(summary(ctTW)$adj.r.squared, 2)), parse = T, cex=6)+
+  geom_text(data=lbctTWb, label = "p < 0.001", cex=6)
+
+#Statistics and labels
+##Plesne
+plNS<-lm(log(Pmin)~log(Cmin), data=subset(All_field2, Soil=="Plesne" & Origin=="Native" & Period=="Summer"))
+summary(plNS)
+lbplNSa<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 2, Origin = factor("Native", levels = c("Native", "Transplanted")),
+                    Soil = factor("Plesne", levels = c("Plesne", "Certovo")),
+                    Period = factor("Summer", levels = c("Summer", "Winter")))
+lbplNSb<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 1.2, Origin = factor("Native", levels = c("Native", "Transplanted")),
+                    Soil = factor("Plesne", levels = c("Plesne", "Certovo")),
+                    Period = factor("Summer", levels = c("Summer", "Winter")))
+
+plNW<-lm(log(Pmin)~log(Cmin), data=subset(All_field2, Soil=="Plesne" & Origin=="Native" & Period=="Winter"))
+summary(plNW)
+
+lbplNWa<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 2, Origin = factor("Native", levels = c("Native", "Transplanted")),
+                    Soil = factor("Plesne", levels = c("Plesne", "Certovo")),
+                    Period = factor("Winter", levels = c("Summer", "Winter")))
+lbplNWb<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 1.2, Origin = factor("Native", levels = c("Native", "Transplanted")),
+                    Soil = factor("Plesne", levels = c("Plesne", "Certovo")),
+                    Period = factor("Winter", levels = c("Summer", "Winter")))
+
+plTS<-lm(log(Pmin)~log(Cmin), data=subset(All_field2, Soil=="Plesne" & Origin=="Transplanted" & Period=="Summer"))
+summary(plTS)
+
+lbplTSa<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 2, Origin = factor("Transplanted", levels = c("Native", "Transplanted")),
+                    Soil = factor("Plesne", levels = c("Plesne", "Certovo")),
+                    Period = factor("Summer", levels = c("Summer", "Winter")))
+lbplTSb<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 1.2, Origin = factor("Transplanted", levels = c("Native", "Transplanted")),
+                    Soil = factor("Plesne", levels = c("Plesne", "Certovo")),
+                    Period = factor("Summer", levels = c("Summer", "Winter")))
+
+plTW<-lm(log(Pmin)~log(Cmin), data=subset(All_field2, Soil=="Plesne" & Origin=="Transplanted" & Period=="Winter"))
+summary(plTW)
+
+lbplTWa<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 2, Origin = factor("Transplanted", levels = c("Native", "Transplanted")),
+                    Soil = factor("Plesne", levels = c("Plesne", "Certovo")),
+                    Period = factor("Winter", levels = c("Summer", "Winter")))
+lbplTWb<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 1.2, Origin = factor("Transplanted", levels = c("Native", "Transplanted")),
+                    Soil = factor("Plesne", levels = c("Plesne", "Certovo")),
+                    Period = factor("Winter", levels = c("Summer", "Winter")))
+
+##Certovo
+ctNS<-lm(log(Pmin)~log(Cmin), data=subset(All_field2, Soil=="Certovo" & Origin=="Native" & Period=="Summer"))
+summary(ctNS)
+
+lbctNSa<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 2, Origin = factor("Native", levels = c("Native", "Transplanted")),
+                    Soil = factor("Certovo", levels = c("Plesne", "Certovo")),
+                    Period = factor("Summer", levels = c("Summer", "Winter")))
+lbctNSb<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 1.2, Origin = factor("Native", levels = c("Native", "Transplanted")),
+                    Soil = factor("Certovo", levels = c("Plesne", "Certovo")),
+                    Period = factor("Summer", levels = c("Summer", "Winter")))
+
+ctNW<-lm(log(Pmin)~log(Cmin), data=subset(All_field2, Soil=="Certovo" & Origin=="Native" & Period=="Winter"))
+summary(ctNW)
+
+lbctNWa<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 2, Origin = factor("Native", levels = c("Native", "Transplanted")),
+                    Soil = factor("Certovo", levels = c("Plesne", "Certovo")),
+                    Period = factor("Winter", levels = c("Summer", "Winter")))
+lbctNWb<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 1.2, Origin = factor("Native", levels = c("Native", "Transplanted")),
+                    Soil = factor("Certovo", levels = c("Plesne", "Certovo")),
+                    Period = factor("Winter", levels = c("Summer", "Winter")))
+
+ctTS<-lm(log(Pmin)~log(Cmin), data=subset(All_field2, Soil=="Certovo" & Origin=="Transplanted" & Period=="Summer"))
+summary(ctTS)
+
+lbctTSa<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 2, Origin = factor("Transplanted", levels = c("Native", "Transplanted")),
+                    Soil = factor("Certovo", levels = c("Plesne", "Certovo")),
+                    Period = factor("Summer", levels = c("Summer", "Winter")))
+lbctTSb<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 1.2, Origin = factor("Transplanted", levels = c("Native", "Transplanted")),
+                    Soil = factor("Certovo", levels = c("Plesne", "Certovo")),
+                    Period = factor("Summer", levels = c("Summer", "Winter")))
+
+ctTW<-lm(log(Pmin)~log(Cmin), data=subset(All_field2, Soil=="Certovo" & Origin=="Transplanted" & Period=="Winter"))
+summary(ctTW)
+
+lbctTWa<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 2, Origin = factor("Transplanted", levels = c("Native", "Transplanted")),
+                    Soil = factor("Certovo", levels = c("Plesne", "Certovo")),
+                    Period = factor("Winter", levels = c("Summer", "Winter")))
+lbctTWb<-data.frame(lab="Text",
+                    Cmin = 100*1000, Pmin = 1.2, Origin = factor("Transplanted", levels = c("Native", "Transplanted")),
+                    Soil = factor("Certovo", levels = c("Plesne", "Certovo")),
+                    Period = factor("Winter", levels = c("Summer", "Winter")))
+
+write.xlsx(Cmin_field, file = c("./Field_data_raw/Kumulativni.xlsx"))
+resp_all$resp<-resp_all$resp/44*1000
+resp_all2<-resp_all
+resp_all2[resp_all2$Origin=="Control", "horizon"]<-"Control"
+resp_all2[resp_all2$Origin=="Control", "Origin"]<-"Native"
+
+write.xlsx(resp_all2, file = c("./Field_data_raw/Rychlosti.xlsx"))
